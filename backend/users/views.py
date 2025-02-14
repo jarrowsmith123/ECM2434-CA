@@ -16,8 +16,16 @@ def register(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET'])
+@api_view(['GET', 'PATCH'])
 @permission_classes([IsAuthenticated])
-def get_profile(request):
-    serializer = UserProfileSerializer(request.user.profile)
-    return Response(serializer.data)
+def profile(request):
+    if request.method == 'GET':
+        serializer = UserProfileSerializer(request.user.profile)
+        return Response(serializer.data)
+    
+    elif request.method == 'PATCH':
+        serializer = UserProfileSerializer(request.user.profile, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

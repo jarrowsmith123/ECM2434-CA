@@ -5,13 +5,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
     total_km = serializers.FloatField(default=0.0)
     distance_today = serializers.FloatField(default=0.0)
     distance_week = serializers.FloatField(default=0.0)
-    monsters_collected = serializers.IntegerField(default=0)
     display_name = serializers.CharField(max_length=100, required=False)
-    challenges_completed = serializers.IntegerField(default=0)
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'display_name', 'total_km', 'distance_today', 'distance_week', 'monsters_collected','challenges_completed')
+        fields = ('id', 'username', 'email', 'display_name', 'total_km', 'distance_today', 'distance_week')
         read_only_fields = ('id', 'username', 'email')
 
 class UserSerializer(serializers.ModelSerializer):

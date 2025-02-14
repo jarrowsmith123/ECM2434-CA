@@ -9,8 +9,6 @@ class UserProfile(models.Model):
     total_km = models.FloatField(default=0.0)
     distance_today = models.FloatField(default=0.0)
     distance_week = models.FloatField(default=0.0)
-    monsters_collected = models.IntegerField(default=0) # this will be the monster id
-    challenges_completed = models.IntegerField(default=0) # this will be the challenge id
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
