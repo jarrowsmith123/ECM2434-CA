@@ -14,6 +14,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    email = serializers.EmailField(required=True)
     profile = UserProfileSerializer(read_only=True)
 
     class Meta:
@@ -22,6 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {"password": {"write_only": True}}
     # this uses django built in validation to check if fields are valid
     def create(self, validated_data):
+        print(validated_data)
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data.get('email', ''),
