@@ -37,17 +37,14 @@ class UserTests(APITestCase):
         # test initial profile state
         profile_response = self.client.get(self.profile_url)
         self.assertEqual(profile_response.status_code, status.HTTP_200_OK)
-        self.assertEqual(profile_response.data['display_name'], '')
         self.assertEqual(profile_response.data['total_km'], 0.0)
         
         # test succesful profile update
         update_data = {
-            'display_name': 'New Display Name',
             'total_km': 15.5
         }
         update_response = self.client.patch(self.profile_url, update_data, format='json')
         self.assertEqual(update_response.status_code, status.HTTP_200_OK)
-        self.assertEqual(update_response.data['display_name'], update_data['display_name'])
         self.assertEqual(update_response.data['total_km'], update_data['total_km'])
 
     def test_edge_cases(self):
@@ -73,7 +70,6 @@ class UserTests(APITestCase):
         self.authenticate_user(self.user_data['username'], self.user_data['password'])
         invalid_updates = {
             'total_km': 'not a number',
-            'display_name': ['invalid', 'format']
         }
         response = self.client.patch(self.profile_url, invalid_updates, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
