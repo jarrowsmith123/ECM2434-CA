@@ -29,3 +29,4 @@ class MonsterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Monster
         fields = ['id','name','level','type','rarity']
+        read_only_fields = ('id')
