@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const BACKEND = "http://localhost:8001"
+const BACKEND = "http://localhost:8000"
 
 const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(true);
