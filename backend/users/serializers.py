@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import UserProfile
+from .models import UserProfile,Monster
 
 class UserProfileSerializer(serializers.ModelSerializer):
 
@@ -24,3 +24,8 @@ class UserSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+    
+class MonsterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Monster
+        fields = ['id','name','level','type','rarity']
