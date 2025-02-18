@@ -24,3 +24,32 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+class Monster(models.Model):
+    # Monster Rarity
+    RARITY_CHOICES = [
+        ('C', 'Common'),
+        ('U', 'Uncommon'),
+        ('R', 'Rare'),
+        ('E', 'Epic'),
+        ('L', 'Legendary'),
+    ]
+
+    TYPES = [
+        ('F&D', 'Food and Drink'),
+        ('H', 'Health'),
+        ('WB', 'Wellbeing'),
+        ('W', 'Water'),
+        ('WA', 'Waste'),
+        ('N&B', 'Nature and Biodiversity'),
+        ('T', 'Transport'),
+    ]
+
+    name = models.CharField(max_length=20)
+    # maybe add level cap in future such as 99?
+    level = models.IntegerField()
+    type = models.CharField(choices=TYPES)
+    rarity = models.CharField(choices=RARITY_CHOICES)
+
+    def __str__(self):
+        return f"{self.name} (Level: {self.level}, Rarity: {self.rarity}, Type:{self.type})"
