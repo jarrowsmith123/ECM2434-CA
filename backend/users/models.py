@@ -53,3 +53,17 @@ class Monster(models.Model):
 
     def __str__(self):
         return f"{self.name} (Level: {self.level}, Rarity: {self.rarity}, Type:{self.type})"
+    
+class PlayerMonster(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player_monsters')
+    monster = models.ForeignKey(Monster, on_delete=models.CASCADE, related_name='player_monsters')
+    level = models.IntegerField(default=1)
+    MAX_LEVEL = 99
+
+    def increment_level(self, amount):
+        new_level = min(self.level + amount, self.MAX_LEVEL)
+        self.level = new_level
+        self.save()
+
+    def __str__(self):
+        return f"{self.user.username}'s {self.monster.name} (Level: {self.level})"
