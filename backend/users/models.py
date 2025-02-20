@@ -24,3 +24,46 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+class Monster(models.Model):
+    # Monster Rarity
+    RARITY_CHOICES = [
+        ('C', 'Common'),
+        ('U', 'Uncommon'),
+        ('R', 'Rare'),
+        ('E', 'Epic'),
+        ('L', 'Legendary'),
+    ]
+
+    TYPES = [
+        ('F&D', 'Food and Drink'),
+        ('H', 'Health'),
+        ('WB', 'Wellbeing'),
+        ('W', 'Water'),
+        ('WA', 'Waste'),
+        ('N&B', 'Nature and Biodiversity'),
+        ('T', 'Transport'),
+    ]
+
+    name = models.CharField(max_length=20)
+    # maybe add level cap in future such as 99?
+    level = models.IntegerField()
+    type = models.CharField(choices=TYPES)
+    rarity = models.CharField(choices=RARITY_CHOICES)
+
+    def __str__(self):
+        return f"{self.name} (Level: {self.level}, Rarity: {self.rarity}, Type:{self.type})"
+    
+class PlayerMonster(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player_monsters')
+    monster = models.ForeignKey(Monster, on_delete=models.CASCADE, related_name='player_monsters')
+    level = models.IntegerField(default=1)
+    MAX_LEVEL = 99
+
+    def increment_level(self, amount):
+        new_level = min(self.level + amount, self.MAX_LEVEL)
+        self.level = new_level
+        self.save()
+
+    def __str__(self):
+        return f"{self.user.username}'s {self.monster.name} (Level: {self.level})"
