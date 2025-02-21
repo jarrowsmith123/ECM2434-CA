@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './LoginPage.css';
 
 const BACKEND = "http://localhost:8000"
 
@@ -22,7 +23,7 @@ const LoginPage = () => {
     try {
       const endpoint = BACKEND + (isLogin ? '/api/token/' : '/api/user/register/');
         
-        console.log(data);
+      console.log(data);
         
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -50,21 +51,22 @@ const LoginPage = () => {
   };
 
   return (
-    <div>
-      <div >
-        <div>
-          <h2>
+    <div className="login-container">
+      <div className="login-card">
+        <div className="login-header">
+          <h2 className="login-title">
             {isLogin ? 'Sign in to your account' : 'Create new account'}
           </h2>
         </div>
         
         <form onSubmit={handleSubmit}>
-          <div>
-            <div>
-              <label htmlFor="username">
+          <div className="login-form-container">
+            <div className="form-group">
+              <label className="form-label" htmlFor="username">
                 Username
               </label>
               <input
+                className="form-input"
                 id="username"
                 name="username"
                 type="text"
@@ -73,11 +75,12 @@ const LoginPage = () => {
             </div>
 
             {!isLogin && (
-              <div>
-                <label htmlFor="email">
+              <div className="form-group">
+                <label className="form-label" htmlFor="email">
                   Email
                 </label>
                 <input
+                  className="form-input"
                   id="email"
                   name="email"
                   type="email"
@@ -86,11 +89,12 @@ const LoginPage = () => {
               </div>
             )}
 
-            <div>
-              <label htmlFor="password">
+            <div className="form-group">
+              <label className="form-label" htmlFor="password">
                 Password
               </label>
               <input
+                className="form-input"
                 id="password"
                 name="password"
                 type="password"
@@ -100,11 +104,12 @@ const LoginPage = () => {
           </div>
 
           {error && (
-              <text>{error}</text>
+            <span className="error-message">{error}</span>
           )}
 
-          <div>
+          <div className="button-container">
             <button
+              className="submit-button"
               type="submit"
               disabled={loading}
             >
@@ -113,8 +118,9 @@ const LoginPage = () => {
           </div>
         </form>
 
-        <div>
+        <div className="toggle-container">
           <button
+            className="toggle-button"
             onClick={() => setIsLogin(!isLogin)}
           >
             {isLogin ? 'Need an account? Sign up' : 'Already have an account? Sign in'}
