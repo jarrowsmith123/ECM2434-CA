@@ -46,10 +46,8 @@ class Monster(models.Model):
     ]
 
     name = models.CharField(max_length=20)
-    # maybe add level cap in future such as 99?
-    level = models.IntegerField()
-    type = models.CharField(choices=TYPES)
-    rarity = models.CharField(choices=RARITY_CHOICES)
+    type = models.CharField(max_length=3, choices=TYPES)
+    rarity = models.CharField(max_length=1, choices=RARITY_CHOICES)
 
     def __str__(self):
         return f"{self.name} (Level: {self.level}, Rarity: {self.rarity}, Type:{self.type})"
