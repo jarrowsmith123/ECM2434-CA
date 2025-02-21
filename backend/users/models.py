@@ -29,7 +29,6 @@ class Monster(models.Model):
     # Monster Rarity
     RARITY_CHOICES = [
         ('C', 'Common'),
-        ('U', 'Uncommon'),
         ('R', 'Rare'),
         ('E', 'Epic'),
         ('L', 'Legendary'),
@@ -53,8 +52,8 @@ class Monster(models.Model):
         return f"{self.name} (Level: {self.level}, Rarity: {self.rarity}, Type:{self.type})"
     
 class PlayerMonster(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player_monsters')
-    monster = models.ForeignKey(Monster, on_delete=models.CASCADE, related_name='player_monsters')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player_monsters') # includes details from the user
+    monster = models.ForeignKey(Monster, on_delete=models.CASCADE, related_name='player_monsters') # includes details from the monster
     level = models.IntegerField(default=1)
     MAX_LEVEL = 99
 

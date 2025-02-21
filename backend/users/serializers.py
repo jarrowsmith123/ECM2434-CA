@@ -33,7 +33,6 @@ class MonsterSerializer(serializers.ModelSerializer):
 
 class PlayerMonsterSerializer(serializers.ModelSerializer):
     monster = MonsterSerializer(read_only=True)
-    
     class Meta:
         model = PlayerMonster
         fields = ['id', 'user', 'monster', 'level']

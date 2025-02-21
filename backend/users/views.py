@@ -8,8 +8,6 @@ from django.contrib.auth.models import User
 from .serializers import UserSerializer, UserProfileSerializer,MonsterSerializer,PlayerMonsterSerializer
 from .models import Monster
 
-
-
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
@@ -41,7 +39,6 @@ def update_profile(request):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_monster(request): # Create new monster
@@ -66,7 +63,6 @@ def increment_player_monster_level(request, player_monster_id):
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_player_monster(request):
