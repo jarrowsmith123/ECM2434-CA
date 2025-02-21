@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import UserProfile,Monster
+from .models import UserProfile,Monster,PlayerMonster
 
 class UserProfileSerializer(serializers.ModelSerializer):
 
@@ -28,5 +28,11 @@ class UserSerializer(serializers.ModelSerializer):
 class MonsterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Monster
-        fields = ['id','name','level','type','rarity']
-        read_only_fields = ('id')
+        fields = ['id','name','type','rarity']
+
+
+class PlayerMonsterSerializer(serializers.ModelSerializer):
+    monster = MonsterSerializer(read_only=True)
+    class Meta:
+        model = PlayerMonster
+        fields = ['id', 'user', 'monster', 'level']

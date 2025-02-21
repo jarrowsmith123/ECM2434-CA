@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
+from .models import UserProfile, PlayerMonster, Monster
+
 
 class UserTests(APITestCase):
     def setUp(self):
@@ -78,3 +80,5 @@ class UserTests(APITestCase):
         self.client.credentials()
         response = self.client.get(self.profile_url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
