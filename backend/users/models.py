@@ -49,7 +49,7 @@ class Monster(models.Model):
     rarity = models.CharField(max_length=1, choices=RARITY_CHOICES)
 
     def __str__(self):
-        return f"{self.name} (Level: {self.level}, Rarity: {self.rarity}, Type:{self.type})"
+        return f"{self.name} (Rarity: {self.rarity}, Type:{self.type})"
     
 class PlayerMonster(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player_monsters') # includes details from the user
@@ -64,3 +64,6 @@ class PlayerMonster(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s {self.monster.name} (Level: {self.level})"
+    
+
+
