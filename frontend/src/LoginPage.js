@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
 
 const BACKEND = "http://localhost:8000"
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -38,10 +40,16 @@ const LoginPage = () => {
       }
 
       const result = await response.json();
-        
+        // look back over this
       if (isLogin) {
         localStorage.setItem('accessToken', result.access);
         localStorage.setItem('refreshToken', result.refresh);
+        // Navigate to home page after successful login
+        navigate('/home');
+      } else {
+        // After successful registration, switch to login mode
+        setIsLogin(true);
+        setError('Registration successful! Please log in.');
       }
     } catch (err) {
       setError(err.message);
