@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "rest-framework": "^0.2.6"
+  }
+}
