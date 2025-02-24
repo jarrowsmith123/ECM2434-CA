@@ -5,10 +5,7 @@ from django.dispatch import receiver
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile') # include details from the user model
-    display_name = models.CharField(max_length=100, blank=True)
-    total_km = models.FloatField(default=0.0)
-    distance_today = models.FloatField(default=0.0)
-    distance_week = models.FloatField(default=0.0)
+    game_won_count = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -68,12 +65,12 @@ class PlayerMonster(models.Model):
 class Location(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
+    # Distance a user can be away from the location to be considered being there
+    distance_threshold = models.FloatField(default=0.001)
 
     location_name = models.TextField(blank=True)
-    # Added description of the location if needed
-    desc =  models.TextField(blank=True)
-    user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="locations")
-
+    description =  models.TextField(blank=True)
+    
     # Will auto set current date and time everytime model is saved
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

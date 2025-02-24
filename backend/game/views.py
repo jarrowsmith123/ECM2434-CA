@@ -49,11 +49,14 @@ def submit_challenge_attempt(request):
 
         calculator = GameScoreCalculator()
         score = calculator.calculate_score(monsters)
-
+        # When winning, level up the monsters and increment user's games won
         if score >= challenge.target_score:
             for monster in monsters:
                 monster.level += 1
                 monster.save()
+                user_profile = request.user.profile
+                user_profile.games_won_count += 1
+                user_profile.save()
 
             return Response({
                 'success': True,
