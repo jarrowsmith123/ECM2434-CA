@@ -5,8 +5,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth.models import User
-from .serializers import UserSerializer, UserProfileSerializer,MonsterSerializer,PlayerMonsterSerializer
-from .models import Monster
+from .serializers import UserSerializer, UserProfileSerializer,MonsterSerializer,PlayerMonsterSerializer,LocationSerializer
+from .models import Monster,Location
 from random import choices
 
 @api_view(['POST'])
@@ -125,3 +125,39 @@ def generate_random_monster(request):
         serializer = PlayerMonsterSerializer(player_monster)
     
     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+# Creates new location
+def create_location(request):
+    serializer = LocationSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(user=request.user)
+        # Returns dictionary of newly created locations attributes
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def update_location(request, location_id):
+    # Updates geographical location of specified location for current user
+    location = get_object_or_404(Location, pk=location_id, user=request.user)
+    serializer = LocationSerializer(location, data=request.data, partial=True)
+    
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+# Returns serializer data dict for each location (etc. id,user,name...)
+def get_all_locations(request):
+    user_locations = Location.objects.filter(user=request.user)
+    
+    serializer = LocationSerializer(user_locations, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import UserProfile,Monster,PlayerMonster
+from .models import UserProfile,Monster,PlayerMonster,Location
 
 class UserProfileSerializer(serializers.ModelSerializer):
 
@@ -36,3 +36,24 @@ class PlayerMonsterSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlayerMonster
         fields = ['id', 'user', 'monster', 'level']
+
+class LocationSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source='user.username')  # Shows username instead of user ID should make it easier to distinguish
+
+    class Meta:
+        model = Location
+        fields = ['id', 'name', 'latitude', 'longitude', 'created_at', 'updated_at', 'user']
+        read_only_fields = ['id', 'created_at', 'updated_at', 'user']
+
+    def validate(self, data):
+        #Checks that the latitude and longitude values are within valid ranges
+        latitude = data.get('latitude')
+        longitude = data.get('longitude')
+
+        if latitude is not (-90 <= latitude <= 90):
+            raise serializers.ValidationError("Latitude must be between -90 and 90 degrees")
+
+        if longitude is not (-180 <= longitude <= 180):
+            raise serializers.ValidationError("Latitude must be between -90 and 90 degrees")
+
+        return data
