@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import './Colours.css';
 import './MonstersPage.css';
 
 const BACKEND = "http://localhost:8000";
