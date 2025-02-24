@@ -65,5 +65,23 @@ class PlayerMonster(models.Model):
     def __str__(self):
         return f"{self.user.username}'s {self.monster.name} (Level: {self.level})"
     
+class Location(models.Model):
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
+    location_name = models.TextField(blank=True)
+    # Added description of the location if needed
+    desc =  models.TextField(blank=True)
+    user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="locations")
+
+    # Will auto set current date and time everytime model is saved
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+
+    
 
 

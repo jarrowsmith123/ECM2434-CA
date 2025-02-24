@@ -9,4 +9,7 @@ urlpatterns = [
     path('increment-level/', views.increment_player_monster_level, name='increment-player-monster'),
     path('random-monster/', views.generate_random_monster, name='random-monster'),
     
+    path('locations/', views.get_all_locations, name='get_all_locations'),
+    path('locations/create/', views.create_location, name='create_location'),
+    path('locations/update/<int:location_id>/', views.update_location, name='update_location'),
 ]
