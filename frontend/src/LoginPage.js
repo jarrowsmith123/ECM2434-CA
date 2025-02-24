@@ -40,7 +40,7 @@ const LoginPage = () => {
       }
 
       const result = await response.json();
-        // look back over this
+      // look back over this
       if (isLogin) {
         localStorage.setItem('accessToken', result.access);
         localStorage.setItem('refreshToken', result.refresh);
