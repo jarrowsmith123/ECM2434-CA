@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from users.models import PlayerMonster
@@ -7,8 +7,10 @@ from .game_score_calculator import GameScoreCalculator
 from .models import GameChallenge
 from .serializers import GameChallengeSerializer
 from django.shortcuts import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def calculate_hand_score(request):
 
     try:
@@ -32,6 +34,7 @@ def calculate_hand_score(request):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def submit_challenge_attempt(request):
     try:
         challenge_id = request.data.get('challenge_id')
@@ -72,3 +75,12 @@ def submit_challenge_attempt(request):
         return Response({
             'error': str(e)
         }, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_challenge(request):
+    serializer = GameChallengeSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
