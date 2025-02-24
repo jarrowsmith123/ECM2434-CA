@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     "users",
     "corsheaders",
     "rest_framework",
-    "game"
+    "game",
+    "location",
+    "monsters"
 ]
 
 MIDDLEWARE = [
