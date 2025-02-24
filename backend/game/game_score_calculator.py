@@ -25,11 +25,11 @@ class GameScoreCalculator:
         multiplier = 1
         monster_levels = [monster.level for monster in monsters]
 
-        types_in_play = [monster.type for monster in monsters]
+        types_in_play = [monster.monster.type for monster in monsters]
 
         # For any waste monsters in play, swap the lowest level monster with that waste card's level
         if 'WA' in types_in_play:
-            waste_cards = [monster for monster in monsters if monster.type == 'WA']
+            waste_cards = [monster for monster in monsters if monster.monster.type == 'WA']
             for waste_card in waste_cards:
                 min_level = min(monster_levels)
                 monster_levels.remove(min_level)
@@ -45,8 +45,8 @@ class GameScoreCalculator:
 
         for level in monster_levels:
             score += level
-
-        return score * multiplier
+        # Converting float to int might change expected score so we need to look at this later
+        return int(score * multiplier)
 
         
     
