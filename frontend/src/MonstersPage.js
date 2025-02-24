@@ -1,5 +1,10 @@
+<<<<<<< Updated upstream
 import React, { useEffect, useState } from 'react';
 import './Colours.css';
+=======
+import React, { useState, useEffect } from 'react';
+
+>>>>>>> Stashed changes
 import './MonstersPage.css';
 
 const BACKEND = "http://localhost:8000";
@@ -54,6 +59,7 @@ const MonstersPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+    // Add levels
   const fetchMonsters = async () => {
     // TODO: Implement when endpoint is written
     
