@@ -352,9 +352,8 @@ const HomePage = () => {
     navigate('/monsters');
   };
 
-  const handleChallengesClick = () => {
-      // We arent doing challenges anymore
-    //navigate('/challenges');
+  const handleProfileClick = () => {
+    navigate('/profile');
   };
 
   const handleCollect = () => {
@@ -428,10 +427,10 @@ const HomePage = () => {
       </button>
       
       <button
-        className="nav-button challenges-button"
-        onClick={handleChallengesClick}
+        className="nav-button profile-button"
+        onClick={handleProfileClick}
       >
-        Challenges
+        Profile
       </button>
           
       <button

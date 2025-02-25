@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import UserSerializer, UserProfileSerializer
 
-
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
@@ -12,7 +11,7 @@ def register(request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(status=status.HTTP_201_CREATED)
             
         if serializer.errors:
             return Response(
@@ -22,9 +21,9 @@ def register(request):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-    except Exception as e: # need to add logging and make this do it properly because printing exceptions is yucky
+    except Exception as e:
         return Response(
-            {'error': 'An unexpected error occurred during registration.'},
+            {'error': str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
@@ -33,24 +32,26 @@ def register(request):
 def update_profile(request):
     try:
         if request.method == 'GET':
-            serializer = UserProfileSerializer(request.user.profile)
+            serializer = UserSerializer(request.user)
             return Response(serializer.data)
         
         elif request.method == 'PATCH':
-            serializer = UserProfileSerializer(request.user.profile, data=request.data, partial=True)
+            serializer = UserSerializer(request.user, data=request.data, partial=True)
+            
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-    except AttributeError:
+    except AttributeError as e:
         return Response(
-            {'error': 'User profile not found.'},
+            {'error': f'User profile not found. {str(e)}'},
             status=status.HTTP_404_NOT_FOUND
         )
     except Exception as e:
+        print(str(e))
         return Response(
-            {'error': 'An unexpected error occurred while processing your request.'},
+            {'error': str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
     
