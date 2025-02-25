@@ -19,25 +19,37 @@ def create_location(request):
     
     return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
-
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
 def update_location(request, location_id):
-    # Updates geographical location of specified location
-    location = get_object_or_404(Location, pk=location_id)
-    serializer = LocationSerializer(location, data=request.data, partial=True)
-    
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-
+    try:
+        # Updates geographical location of specified location
+        location = get_object_or_404(Location, pk=location_id)
+        serializer = LocationSerializer(location, data=request.data, partial=True)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        
+    except Exception as e:
+        return Response(
+            {"error": str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 # returns all locations in the db
 def get_all_locations(request):
-    locations = Location.objects.all()
-    serializer = LocationSerializer(locations, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    try:
+        locations = Location.objects.all()
+        serializer = LocationSerializer(locations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response(
+            {"error": str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

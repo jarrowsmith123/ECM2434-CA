@@ -26,7 +26,13 @@ def calculate_hand_score(request):
         }, status=status.HTTP_400_BAD_REQUEST)
     
     calculator = GameScoreCalculator()
-    score = calculator.calculate_score(monsters)
+    
+    try:
+        score = calculator.calculate_score(monsters)
+    except Exception as e:
+        return Response({
+            'error': f'Error in calculating score: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     return Response({
         'score': score
