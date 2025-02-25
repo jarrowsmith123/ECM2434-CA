@@ -40,7 +40,7 @@ def update_profile(request):
             serializer = UserProfileSerializer(request.user.profile, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data)
+                return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
     except AttributeError:
@@ -56,5 +56,19 @@ def update_profile(request):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
     
-
-
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_user(request):
+    try:
+        user = request.user
+        user.delete()
+        return Response(
+            {'message': 'account deleted'},
+            status=status.HTTP_200_OK
+        )
+    
+    except Exception as e:
+        return Response(
+            {'error': 'failed to delete account'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
