@@ -44,13 +44,11 @@ def update_profile(request):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
     except AttributeError:
-        logger.error(f"Profile access error for user {request.user.id}: User has no profile", exc_info=True)
         return Response(
             {'error': 'User profile not found.'},
             status=status.HTTP_404_NOT_FOUND
         )
     except Exception as e:
-        logger.error(f"Profile update error for user {request.user.id}: {str(e)}", exc_info=True)
         return Response(
             {'error': 'An unexpected error occurred while processing your request.'},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
