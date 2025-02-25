@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'
 import './MonstersPage.css';
 
 const BACKEND = "http://localhost:8000";
@@ -72,6 +73,7 @@ const MonsterCard = ({ monster }) => {
 };
 
 const MonstersPage = () => {
+  const navigate = useNavigate();
   const [monsters, setMonsters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -93,6 +95,10 @@ const MonstersPage = () => {
           setMonsters(sampleMonsters);
           setLoading(false);*/
   };
+    
+    const playGameButtonPressHandler = () => {
+        navigate("/monsters_challenge");
+    };
 
   useEffect(() => {
     fetchMonsters();
@@ -120,6 +126,12 @@ const MonstersPage = () => {
             </div>
           )}
         </div>
+          <button
+            className="game-button"
+            onClick={playGameButtonPressHandler}
+          >
+            Play Game
+        </button>
       </div>
     </div>
   );

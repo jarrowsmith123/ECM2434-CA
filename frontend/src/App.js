@@ -4,6 +4,7 @@ import LoginPage from './LoginPage';
 import HomePage from './HomePage';
 import MonstersPage from './MonstersPage';
 import UserProfilePage from './UserProfilePage';
+import MonstersChallengePage from './MonstersChallengePage';
 import './App.css';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
           <Route path="/home" element={<HomePage />} />
           <Route path="/monsters" element={<MonstersPage />} />
           <Route path="/profile" element={<UserProfilePage />} />
+          <Route path="/monsters_challenge" element={<MonstersChallengePage />} />
         </Routes>
       </div>
     </Router>
