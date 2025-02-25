@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import Monster
+from monsters.models import Monster
 
 # Create your models here.
 class GameChallenge(models.Model):
