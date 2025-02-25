@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from users.models import PlayerMonster
+from monsters.models import PlayerMonster
 from .game_score_calculator import GameScoreCalculator
 from .models import GameChallenge
 from .serializers import GameChallengeSerializer
