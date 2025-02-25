@@ -13,28 +13,48 @@ def register(request):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
-        # add better handling off fails because errors like this come back as 400 bad request
-        # this is a conflict error 409 so use that not the 400 error for anything and everything
-        # Validation errors: {'username': [ErrorDetail(string='A user with that username already exists.', code='unique')]}
+            
+        if serializer.errors:
+            return Response(
+                {'error': serializer.errors},
+                status=status.HTTP_409_CONFLICT
+            )
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
     except Exception as e: # need to add logging and make this do it properly because printing exceptions is yucky
-        print(e)
+        return Response(
+            {'error': 'An unexpected error occurred during registration.'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 @api_view(['GET', 'PATCH'])
 @permission_classes([IsAuthenticated])
 def update_profile(request):
-    if request.method == 'GET':
-        serializer = UserProfileSerializer(request.user.profile)
-        return Response(serializer.data)
-    
-    elif request.method == 'PATCH':
-        serializer = UserProfileSerializer(request.user.profile, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
+    try:
+        if request.method == 'GET':
+            serializer = UserProfileSerializer(request.user.profile)
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        elif request.method == 'PATCH':
+            serializer = UserProfileSerializer(request.user.profile, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    except AttributeError:
+        logger.error(f"Profile access error for user {request.user.id}: User has no profile", exc_info=True)
+        return Response(
+            {'error': 'User profile not found.'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    except Exception as e:
+        logger.error(f"Profile update error for user {request.user.id}: {str(e)}", exc_info=True)
+        return Response(
+            {'error': 'An unexpected error occurred while processing your request.'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
     
 
 
