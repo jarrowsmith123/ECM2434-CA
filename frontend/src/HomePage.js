@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, useMap, Marker, Popup, Circle } from 'react-leaflet';
-import { useNavigate } from 'react-router-dom';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import React, { useEffect, useState } from 'react';
+import { Circle, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
+import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
 
 const userIcon = new L.Icon({
@@ -19,50 +19,50 @@ const userIcon = new L.Icon({
 
 const monsterIcons = {
   'F&D': new L.Icon({
-    iconUrl: '/images/Food_Monster.png',
+    iconUrl: '/images/foodEgg.png',
     iconSize: [50, 50],
     iconAnchor: [20, 40],
     popupAnchor: [0, -40]
   }),
   'H': new L.Icon({
-    iconUrl: '/images/Nature_Monster.png',
+    iconUrl: '/images/healthEgg.png',
     iconSize: [50, 50],
     iconAnchor: [20, 40],
     popupAnchor: [0, -40]
   }),
   'WB': new L.Icon({
-    iconUrl: '/images/Gym_Monster.png',
+    iconUrl: '/images/wellbeingEgg.png',
     iconSize: [50, 50],
     iconAnchor: [20, 40],
     popupAnchor: [0, -40]
   }),
   'W': new L.Icon({
-    iconUrl: '/images/Nature_Monster.png',
+    iconUrl: '/images/waterEgg.png',
     iconSize: [50, 50],
     iconAnchor: [20, 40],
     popupAnchor: [0, -40]
   }),
   'WA': new L.Icon({
-    iconUrl: '/images/Electricity_Monster.png',
+    iconUrl: '/images/wasteEgg.png',
     iconSize: [50, 50],
     iconAnchor: [20, 40],
     popupAnchor: [0, -40]
   }),
   'N&B': new L.Icon({
-    iconUrl: '/images/Nature_Monster.png',
+    iconUrl: '/images/natureEgg.png',
     iconSize: [50, 50],
     iconAnchor: [20, 40],
     popupAnchor: [0, -40]
   }),
   'T': new L.Icon({
-    iconUrl: '/images/Gym_Monster.png',
+    iconUrl: '/images/transportEgg.png',
     iconSize: [50, 50],
     iconAnchor: [20, 40],
     popupAnchor: [0, -40]
   }),
   // Default icon if type doesn't match
   'default': new L.Icon({
-    iconUrl: '/images/Nature_Monster.png',
+    iconUrl: '/images/natureEgg.png',
     iconSize: [50, 50],
     iconAnchor: [20, 40],
     popupAnchor: [0, -40]
@@ -73,7 +73,7 @@ const monsterIcons = {
 const mockMonsters = [
   {
     id: 1,
-    name: "WaterWizard",
+    name: "WaterWarrior",
     type: "W",
     rarity: "C",
     latitude: 50.736,
@@ -82,7 +82,7 @@ const mockMonsters = [
   },
   {
     id: 2,
-    name: "RecycleBeast",
+    name: "WasteWizard",
     type: "WA",
     rarity: "R",
     latitude: 50.734,
@@ -91,7 +91,7 @@ const mockMonsters = [
   },
   {
     id: 3,
-    name: "NatureGuardian",
+    name: "NatureNinja",
     type: "N&B",
     rarity: "E",
     latitude: 50.733,
@@ -100,7 +100,7 @@ const mockMonsters = [
   },
   {
     id: 4,
-    name: "GymGremlin",
+    name: "TransportTyrant",
     type: "T",
     rarity: "L",
     latitude: 50.737,
@@ -109,7 +109,7 @@ const mockMonsters = [
   },
   {
     id: 5,
-    name: "FoodFiend",
+    name: "FoodFighter",
     type: "F&D",
     rarity: "C",
     latitude: 50.738,
@@ -118,7 +118,7 @@ const mockMonsters = [
   },
   {
     id: 6,
-    name: "HealthHero",
+    name: "HealthHunter",
     type: "H",
     rarity: "R",
     latitude: 50.735,
@@ -127,7 +127,7 @@ const mockMonsters = [
   },
   {
     id: 7,
-    name: "ZenMonster",
+    name: "WellbeingWhisperer",
     type: "WB",
     rarity: "E",
     latitude: 50.732,
