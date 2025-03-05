@@ -45,3 +45,17 @@ class FriendshipSerializer(serializers.ModelSerializer):
         fields = ['id', 'sender_username', 'receiver_username', 'status', 'created_at']
         read_only_fields = ['id', 'created_at']
 
+    def validate(self, data):
+        # Check if the sender and receiver are the same user
+        sender = data.get('sender')
+        receiver = data.get('receiver')
+        if sender == receiver:
+            raise serializers.ValidationError("Sender and receiver cannot be the same user.")
+        
+        # check to see if a friendship already exists, checking both ways
+        if Friendship.objects.filter(sender=sender, receiver=receiver).exists():
+            raise serializers.ValidationError("Friend request already exists.")
+        if Friendship.objects.filter(sender=receiver, receiver=sender).exists():
+            raise serializers.ValidationError("Friend request already exists.")
+        return data
+    
