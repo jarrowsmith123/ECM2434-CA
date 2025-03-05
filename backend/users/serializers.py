@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import UserProfile
+from .models import UserProfile, Friendship
 
 class UserProfileSerializer(serializers.ModelSerializer):
 
@@ -32,5 +32,7 @@ class UserSerializer(serializers.ModelSerializer):
             
         instance.save()
         return instance
+
+
 
 
