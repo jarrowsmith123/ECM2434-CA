@@ -34,5 +34,14 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 
+class FriendshipSerializer(serializers.ModelSerializer):
 
+    # Use the username field of the sender and receiver in output so frontend can display them
+    sender_username = serializers.CharField(source='sender.username', read_only=True)
+    receiver_username = serializers.CharField(source='receiver.username', read_only=True)
+
+    class Meta:
+        model = Friendship
+        fields = ['id', 'sender_username', 'receiver_username', 'status', 'created_at']
+        read_only_fields = ['id', 'created_at']
 
