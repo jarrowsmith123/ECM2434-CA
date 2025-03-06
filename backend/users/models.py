@@ -22,6 +22,16 @@ def create_user_profile(sender, instance, created, **kwargs):
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
+def get_score(self):
+        return self.game_won_count
+
+@classmethod
+def get_leaderboard(cls):
+    # Minus sign infront of game_won count for descending order
+    leaderboard = cls.objects.all().order_by('-game_won_count')
+    # Returns tuple of username and score for each user
+    return [(profile.user.username, profile.get_score()) for profile in leaderboard]
+
 
     
 
