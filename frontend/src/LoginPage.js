@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
 
@@ -164,7 +165,7 @@ const LoginPage = () => {
       {showPolicy && (
         <div className='policy-popup'>
           <div className='policy-content'>
-            <span className='close-button' onClick={() => setShowPolicy(false)}>x</span>
+            <span className='close-button' onClick={() => setShowPolicy(false)}><X/></span>
             <h2>Terms and Conditions</h2>
             <p>
               1 - Introduction
