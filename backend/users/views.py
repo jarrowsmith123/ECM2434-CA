@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .serializers import UserSerializer, UserProfileSerializer
+from .serializers import UserSerializer, FriendshipSerializer
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -26,6 +26,31 @@ def register(request):
             {'error': str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_friend_request(request):
+    try:
+        serializer = FriendshipSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        if serializer.errors:
+            return Response(
+                {'error': serializer.errors},
+                status=status.HTTP_409_CONFLICT
+            )
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    except Exception as e:
+        return Response(
+            {'error': str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
 
 @api_view(['GET', 'PATCH'])
 @permission_classes([IsAuthenticated])
