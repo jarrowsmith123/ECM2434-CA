@@ -121,21 +121,20 @@ const LoginPage = () => {
             </div>
           </div>
 
-          {isLogin && (
-            <div className='policy-container'>
-              <input 
-                type='checkbox'
-                id='policy'
+          {!isLogin && (
+            <div className="policy-container">
+              <input
+                type="checkbox"
+                id="policy"
                 checked={policyChecked}
                 onChange={(e) => setPolicyChecked(e.target.checked)}
                 required
               />
-              <label htmlFor='policy' className='policy-label'>
-                I accept the <span onClick={() => setShowPolicy(true)} className='policy-link'>Terms and Conditions</span>
+              <label htmlFor="policy" className="policy-label">
+                I accept the <span onClick={() => setShowPolicy(true)} className="policy-link">Terms and Conditions</span>
               </label>
             </div>
           )}
-
 
           {error && (
             <span className="error-message">{error}</span>
@@ -163,78 +162,95 @@ const LoginPage = () => {
       </div>
 
       {showPolicy && (
-        <div className='policy-popup'>
-          <div className='policy-content'>
-            <span className='close-button' onClick={() => setShowPolicy(false)}><X/></span>
+        <div className="policy-popup">
+          <div className="policy-content">
+            <span className="close-button" onClick={() => setShowPolicy(false)}><X/></span>
             <h2>Terms and Conditions</h2>
             <p>
-              1 - Introduction
+              1 - Introduction<br />
               This Privacy Policy and Terms of Conditions document outlines how we collect, use, store, and protect your personal information in compliance with the General Data Protection Regulation (GDPR).
-
-              2 - Information we Collect
-              We collect the following personal data:
-              Username
-              Email address
+            </p>
+            <p>
+              2 - Information we Collect<br />
+              We collect the following personal data:<br />
+              Username<br />
+              Email address<br />
               Password
-
-              2.1 - Purpose of Data Collection
-              The data is collected solely for the purpose of:
-              User account creation
-              Login authentication
-              Leaderboard profiles
+            </p>
+            <p>
+              2.1 - Purpose of Data Collection<br />
+              The data is collected solely for the purpose of:<br />
+              User account creation<br />
+              Login authentication<br />
+              Leaderboard profiles<br />
               Communication related to account management
-
-              3 - Legal Basis for Processing
-              Our legal basis for processing your personal data is:
-              Consent: By creating an account, you provide explicit consent for data processing
+            </p>
+            <p>
+              3 - Legal Basis for Processing<br />
+              Our legal basis for processing your personal data is:<br />
+              Consent: By creating an account, you provide explicit consent for data processing<br />
               Contractual necessity: Data is necessary to provide the game service
-
+            </p>
+            <p>
               4 - Data Storage and Security
-
-              4.1 - Storage Location
-              All user data is stored directly in our secure database
+            </p>
+            <p>
+              4.1 - Storage Location<br />
+              All user data is stored directly in our secure database<br />
               No third-party data processors are involved
-
-              4.2 - Security Measures
-              Passwords are hashed and salted
-              Encrypted database connections
+            </p>
+            <p>
+              4.2 - Security Measures<br />
+              Passwords are hashed and salted<br />
+              Encrypted database connections<br />
               Access to user data is strictly limited to essential personnel
-
-              5 - User Rights Under GDPR
+            </p>
+            <p>
+              5 - User Rights Under GDPR<br />
               As a user, you have the following rights
-
-              5.1 - Right to Access
-              You can request a copy of all personal data we store about you
+            </p>
+            <p>
+              5.1 - Right to Access<br />
+              You can request a copy of all personal data we store about you<br />
               Requests will be processed within 30 days
-
-              5.2 - Right to Modification
-              You can update your username, email, or password at any time
+            </p>
+            <p>
+              5.2 - Right to Modification<br />
+              You can update your username, email, or password at any time<br />
               You can make corrections to inaccurate personal data
-
-              5.3 - Right to Deletion
-              You can request complete deletion of your account and associated data
+            </p>
+            <p>
+              5.3 - Right to Deletion<br />
+              You can request complete deletion of your account and associated data<br />
               Upon request, all your personal data will be permanently erased
-
-              5.4 - Right to restrict Processing
+            </p>
+            <p>
+              5.4 - Right to restrict Processing<br />
               You can request limitations on how we process your personal data
-
-              6 - Data Retention
-              User data is retained as long as the account is active
+            </p>
+            <p>
+              6 - Data Retention<br />
+              User data is retained as long as the account is active<br />
               Inactive accounts may be subject to deletion after 9 months of inactivity
-
+            </p>
+            <p>
               7. Consent and Account Termination
-
-              7.1 - Consent
-              By creating an account, you consent to this Privacy Policy
+            </p>
+            <p>
+              7.1 - Consent<br />
+              By creating an account, you consent to this Privacy Policy<br />
               You can withdraw consent at any time by deleting your account
-
-              8 - Changes to Privacy Policy
-              We may update this policy periodically
-              Users will be notified of significant changes
+            </p>
+            <p>
+              8 - Changes to Privacy Policy<br />
+              We may update this policy periodically<br />
+              Users will be notified of significant changes<br />
               Continued use of the game after changes constitutes acceptance
-
+            </p>
+            <p>
               Last Updated: 4th March 2025
-
+            </p>
+            <p>
               By creating an account, you agree to our Terms and Conditions.
             </p>
           </div>
