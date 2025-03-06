@@ -1,20 +1,54 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './MonstersPage.css';
 
 const BACKEND = "http://localhost:8000";
 
 // Monster images based on type - matching the HomePage icons
 const monsterImages = {
-  'F&D': '/images/Food_Monster.png',
-  'H': '/images/Nature_Monster.png',
-  'WB': '/images/Gym_Monster.png',
-  'W': '/images/Nature_Monster.png',
-  'WA': '/images/Electricity_Monster.png',
-  'N&B': '/images/Nature_Monster.png',
-  'T': '/images/Gym_Monster.png',
+  'F&D': { C: ['/images/food1.png'],
+    R: ['/images/food2.png'],
+    E: ['/images/food3.png'],
+    L: ['/images/food4.png']
+  },
+
+  'H': { C: ['/images/health1.png'],
+    R: ['/images/health2.png'],
+    E: ['/images/health3.png'],
+    L: ['/images/health.png']
+  },
+
+  'WB': { C: ['/images/wellbeing1.png'],
+    R: ['/images/wellbeing2.png'],
+    E: ['/images/wellbeing3.png'],
+    L: ['/images/wellbeing4.png']
+  },
+
+  'W': { C: ['/images/water1.png'],
+    R: ['/images/water2.png'],
+    E: ['/images/water3.png'],
+    L: ['/images/water4.png']
+  },
+
+  'WA': { C: ['/images/waste1.png'],
+    R: ['/images/waste2.png'],
+    E: ['/images/waste3.png'],
+    L: ['/images/waste4.png']
+  },
+
+  'N&B': { C: ['/images/nature1.png'],
+    R: ['/images/nature2.png'],
+    E: ['/images/nature3.png'],
+    L: ['/images/nature4.png']
+  },
+
+  'T': { C: ['/images/transport1.png'],
+    R: ['/images/transport2.png'],
+    E: ['/images/transport3.png'],
+    L: ['/images/transport4.png'],
+  },
   // Default image if type doesn't match
-  'default': '/images/Nature_Monster.png'
+  'default': '/images/nature1.png'
 };
 
 const getRarityClass = (rarity) => {
