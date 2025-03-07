@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import UserSerializer, FriendshipSerializer
+from .models import User, Friendship
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -50,7 +51,59 @@ def create_friend_request(request):
             {'error': str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+    
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def accept_friend_request(request, friend_request_id):
+    try:
+        friend_request = Friendship.objects.get(id=friend_request_id)
+        if friend_request.receiver != request.user:
+            return Response(
+                {'error': 'You do not have permission to accept this friend request.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
 
+        friend_request.status = 'accepted'
+        friend_request.save()
+        return Response(status=status.HTTP_200_OK)
+    except Friendship.DoesNotExist:
+        return Response(
+            {'error': 'Friend request not found.'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    except Exception as e:
+        return Response(
+            {'error': str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+    
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def decline_friend_request(request, friend_request_id):
+    try:
+        friend_request = Friendship.objects.get(id=friend_request_id)
+        if friend_request.receiver != request.user:
+            return Response(
+                {'error': 'You do not have permission to decline this friend request.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        friend_request.status = 'declined'
+        friend_request.save()
+        return Response(status=status.HTTP_200_OK)
+    except Friendship.DoesNotExist:
+        return Response(
+            {'error': 'Friend request not found.'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    except Exception as e:
+        return Response(
+            {'error': str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+    
+
+    
+    
 
 @api_view(['GET', 'PATCH'])
 @permission_classes([IsAuthenticated])
