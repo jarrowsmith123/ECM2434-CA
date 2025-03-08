@@ -40,6 +40,18 @@
   right: 20px;
 }
 
+.friends-button {
+  bottom: 20px;
+  left: 20px;
+  /* Custom gradient for friends button to make it stand out */
+  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+  box-shadow: 0 4px 10px rgba(251, 113, 133, 0.3);
+}
+
+.friends-button:hover {
+  box-shadow: 0 4px 12px rgba(251, 113, 133, 0.5);
+}
+
 .collect-button {
   position: fixed;
   bottom: 40px;
