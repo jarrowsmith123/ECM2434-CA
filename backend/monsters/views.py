@@ -95,3 +95,14 @@ def generate_random_monster(request):
         serializer = PlayerMonsterSerializer(player_monster)
     
     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_player_monsters(request):
+    try:
+        player_monsters = PlayerMonster.objects.filter(user=request.user)
+        serializer = PlayerMonsterSerializer(player_monsters, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        # not useful but will bung in here for now
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
