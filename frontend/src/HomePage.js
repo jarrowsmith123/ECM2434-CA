@@ -6,13 +6,17 @@ import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
 
 const userIcon = new L.Icon({
-  iconUrl: 'https://static.vecteezy.com/system/resources/thumbnails/019/897/155/small/location-pin-icon-map-pin-place-marker-png.png',
+  iconUrl: 'https://static.vecteezy.com/system/resources/thumbnails/019/897/155/small/location-pin-icon-map-pin-place-marker-png.png', // just using this one from the web temporarily
   iconSize: [32, 32],
   iconAnchor: [16, 32],
   popupAnchor: [0, -32]
 });
 
-// Monster icons and other constants remain the same
+// The information about all the monsters
+
+// At a later date this shoudl prbably all be added into another file which can be
+// shared across all of the javascript but i havent done that right now
+
 const monsterIcons = {
   'F&D': new L.Icon({
     iconUrl: '/images/foodEgg.png',
@@ -64,7 +68,7 @@ const monsterIcons = {
   })
 };
 
-// Mock monsters data remains the same
+// just come mock data while the backend doesnt support it
 const mockMonsters = [
   {
     id: 1,
@@ -131,9 +135,8 @@ const mockMonsters = [
   }
 ];
 
-// Helper functions remain the same
 const getRarityColor = (rarity) => {
-  switch(rarity) {
+  switch(rarity) { // can change these colours later just liked them from now
     case 'C': return '#a5a5a5';
     case 'R': return '#3498db';
     case 'E': return '#9b59b6';
@@ -142,6 +145,7 @@ const getRarityColor = (rarity) => {
   }
 };
 
+// This needs to be changed in the backed so that they just have the full name instead of the code because they are currently being stored as tuples which is stupid
 const getRarityName = (rarity) => {
   switch(rarity) {
     case 'C': return 'Common';
@@ -173,7 +177,7 @@ const LocationMarker = ({ setUserPosition, isManualMode, manualPosition, setManu
   const map = useMap();
   const markerRef = useRef(null);
 
-  // Handle geolocation tracking when in auto mode
+  // Im not sure if i like the way this works at teh momement but it will do for now.  becuse it will recentre around the point you are at which can be slightly annoying i think that it probably should only do that if you are still cnetred around the point where you arr or if you press a button to recentre it.
   useEffect(() => {
     if (!isManualMode) {
       map.locate({
@@ -259,7 +263,7 @@ const MonsterMarkers = ({ monsters, userPosition, onMonsterClick }) => {
         // Calculate distance to user if user position is known
         let distance = null;
         if (userPosition) {
-          // Haversine formula for distance calculation
+          // Use haversine because it techincally calcualating the distance between 2 points on a globe and this is easier when using the longitude and latitude even though the distance wont be affected by the curvature of the earth
           const earth_radius = 6371e3; // Earth radius in meters
           const angle_1 = userPosition[0] * Math.PI/180;
           const angle_2 = monster.latitude * Math.PI/180;
@@ -317,7 +321,7 @@ const MonsterMarkers = ({ monsters, userPosition, onMonsterClick }) => {
 const HomePage = () => {
   const navigate = useNavigate();
   const [canCollect, setCanCollect] = useState(false);
-  const defaultPosition = [50.735, -3.533]; // Default center position (Exeter uni)
+  const defaultPosition = [50.735, -3.533]; // Default center position which is just exeter uni basically
   const [userPosition, setUserPosition] = useState(null);
   const [manualPosition, setManualPosition] = useState(null);
   const [monsters, setMonsters] = useState(mockMonsters);
@@ -346,7 +350,7 @@ const HomePage = () => {
   // Update canCollect state based on user position and nearby monsters
   useEffect(() => {
     if (userPosition) {
-      // Check if any monster is within collection range
+      // Check if any monster is within collection range which is currently 100m but probably should make this an environment variable or something so its easier to fiddle with
       const nearbyMonster = monsters.find(monster => {
         const earth_radius = 6371e3; // Earth radius in meters
         const angle_1 = userPosition[0] * Math.PI/180;
@@ -384,7 +388,7 @@ const HomePage = () => {
 
   const handleCollect = () => {
     if (selectedMonster && canCollect) {
-      // Update monster to no longer be collectible
+      // Need to implement that backend for this but i thnk this is alright for now because you shouldnt be able to collect a monster twice.
       setMonsters(prevMonsters =>
         prevMonsters.map(monster =>
           monster.id === selectedMonster.id
@@ -470,7 +474,7 @@ const HomePage = () => {
       </button>
           
       <button
-        className="nav-button collect-button"
+        className="nav-button collect-button"  // This is a really jammy fix but it works
         onClick={handleCollect}
         disabled={!canCollect}
       >
