@@ -4,9 +4,16 @@
   "private": true,
   "dependencies": {
     "cra-template": "1.2.0",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^0.477.0",
     "react": "^19.0.0",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^19.0.0",
-    "react-scripts": "5.0.1"
+    "react-leaflet": "^5.0.0",
+    "react-router-dom": "^7.2.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^4.2.4"
   },
   "scripts": {
     "start": "react-scripts start",
