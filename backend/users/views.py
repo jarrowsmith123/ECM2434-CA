@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import UserSerializer, FriendshipSerializer
 from .models import User, Friendship
+from django.db.models import Q
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -101,7 +102,20 @@ def decline_friend_request(request, friend_request_id):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
     
-
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_friends(request):
+    try:
+        friends = Friendship.objects.filter(
+            Q(sender=request.user) or  Q(receiver=request.user),
+        )
+        serializer = FriendshipSerializer(friends, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response(
+            {'error': str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
     
     
 
