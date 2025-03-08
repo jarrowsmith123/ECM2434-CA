@@ -385,6 +385,10 @@ const HomePage = () => {
   const handleProfileClick = () => {
     navigate('/profile');
   };
+  
+  const handleFriendsClick = () => {
+    navigate('/friends');
+  };
 
   const handleCollect = () => {
     if (selectedMonster && canCollect) {
@@ -472,6 +476,13 @@ const HomePage = () => {
       >
         Profile
       </button>
+      
+      <button
+        className="nav-button friends-button"
+        onClick={handleFriendsClick}
+      >
+        Friends
+      </button>
           
       <button
         className="nav-button collect-button"  // This is a really jammy fix but it works
@@ -483,7 +494,7 @@ const HomePage = () => {
           : "No monsters nearby"}
       </button>
 
-      {/* New toggle button for location mode */}
+      {/* Toggle button for location mode */}
       <button
         className="nav-button location-mode-button"
         onClick={toggleLocationMode}
