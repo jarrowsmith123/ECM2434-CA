@@ -50,14 +50,19 @@ const LoginPage = () => {
       }
 
       const result = await response.json();
-      // look back over this
       if (isLogin) {
+        const result = await response.json();
         localStorage.setItem('accessToken', result.access);
         localStorage.setItem('refreshToken', result.refresh);
-        // Navigate to home page after successful login
+        // looked over this again - fixed json response
         navigate('/home');
       } else {
-        // After successful registration, switch to login mode
+        try {
+          const result = await response.json();
+          console.log("Registration response:", result);
+        } catch (parseError) {
+          console.log("Registration successful (no content)");
+        }
         setIsLogin(true);
         setError('Registration successful! Please log in.');
       }
