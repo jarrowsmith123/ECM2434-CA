@@ -1,9 +1,9 @@
 :root {
-  --primary-color: #7e22ce; /* Purple */
-  --primary-hover: #6b21a8;
+  --primary-color: dark blue; /* Blue */
+  --primary-hover: navy;
   --secondary-color: #15b8a6; /* Teal */
-  --accent-color: #fb7185; /* Pink */
-  --background-gradient: linear-gradient(135deg, #fecdd3 0%, #e0f2fe 100%);
+  --accent-color: lightblue; /* Light Blue */
+  --background-gradient: linear-gradient(135deg, lightblue 0%, #e0f2fe 100%);
   --card-bg: rgba(255, 255, 255, 0.95);
   --text-color: #334155;
   --light-text: #64748b;
@@ -35,7 +35,7 @@
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background-color: rgba(251, 113, 133, 0.4); /* Pink */
+  background-color: lightblue; /* Light blue */
   z-index: 0;
 }
 
@@ -59,6 +59,7 @@
   width: 100%;
   max-width: 420px;
   padding: 2.5rem;
+  padding-top: 1rem;
   position: relative;
   z-index: 1;
   transform: translateY(0);
@@ -74,7 +75,7 @@
 /* Header styles */
 .login-header {
   text-align: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1rem;
   position: relative;
 }
 
@@ -215,7 +216,7 @@
 .toggle-button {
   background: none;
   border: none;
-  color: var(--accent-color);
+  color: var(--primary-color);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -232,13 +233,13 @@
   height: 2px;
   bottom: 0;
   left: 50%;
-  background-color: var(--accent-color);
+  background-color: var(--primary-hover);
   transition: all 0.3s ease;
   transform: translateX(-50%);
 }
 
 .toggle-button:hover {
-  color: var(--primary-color);
+  color: var(--primary-hover);
 }
 
 .toggle-button:hover::after {
@@ -387,4 +388,84 @@
     padding: 1.5rem;
     width: 95%;
   }
+}
+
+/* Privacy Policy Styling */
+
+.policy-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.policy-container input {
+  margin-right: 8px;
+}
+
+.policy-label {
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+.policy-link {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+.policy-link:hover {
+  color: var(--primary-hover);
+}
+
+/* Policy Pop-up */
+
+.policy-popup {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  display: flex;
+  justify-content: flex;
+  align-items: center;
+}
+
+.policy-content {
+  background: white;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  box-shadow: var(--shadow);
+  border-radius: 12px;
+}
+
+.policy-content h2 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.policy-content p {
+  color: var(--text-color);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.close-button {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  color: var(--error-color);
+  font-size: 1.5rem;
+  transition: color 0.5s;
+}
+
+.close-button:hover {
+  color: var(--primary-color)
+}
+
+/* Logo Styling */
+.logo {
+  display: block;
+  margin: 0;
+  height: 175px;
+  width: auto;
+  margin-left: 125px;
 }

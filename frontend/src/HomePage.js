@@ -1,8 +1,9 @@
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Circle, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
+import './Colours.css';
 import './HomePage.css';
 
 const userIcon = new L.Icon({
@@ -14,7 +15,7 @@ const userIcon = new L.Icon({
 
 // The information about all the monsters
 
-// At a later date this shoudl prbably all be added into another file which can be
+// At a later date this should probably all be added into another file which can be
 // shared across all of the javascript but i havent done that right now
 
 const monsterIcons = {
@@ -441,6 +442,8 @@ const HomePage = () => {
     
   return (
     <div className="map-container">
+      <img src="/images/textLogo.png" alt="Logo" className="homePageLogo" />
+
       <MapContainer
         center={userPosition || defaultPosition}
         zoom={16}
@@ -503,7 +506,7 @@ const HomePage = () => {
           bottom: '20px',
           right: '20px',
           zIndex: 1000,
-          backgroundColor: isManualMode ? '#ff9800' : '#4CAF50',
+          backgroundColor: isManualMode ? '#d0eff7' : '#d0eff7',
           borderRadius: '50%',
           width: '60px',
           height: '60px',

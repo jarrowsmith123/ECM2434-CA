@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
 
@@ -71,6 +71,7 @@ const LoginPage = () => {
   return (
     <div className="login-container">
       <div className="login-card">
+      <img src="/images/eggLogo.png" alt="Logo" className="logo" />
         <div className="login-header">
           <h2 className="login-title">
             {isLogin ? 'Sign in to your account' : 'Create new account'}

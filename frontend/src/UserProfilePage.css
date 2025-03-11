@@ -18,7 +18,7 @@
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background-color: rgba(251, 113, 133, 0.4); /* Pink */
+  background-color: rgba(68, 131, 249, 0.4); /* Blue */
   z-index: 0;
 }
 
@@ -30,7 +30,7 @@
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  background-color: rgba(21, 184, 166, 0.4); /* Teal */
+  background-color: rgba(68, 131, 249, 0.4); /* Blue */
   z-index: 0;
 }
 
