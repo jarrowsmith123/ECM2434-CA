@@ -1,24 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import './MonstersChallengePage.css';
 
-const BACKEND = "http://localhost:8000";
+const BACKEND = "http://localhost:8000/api";
 
-// Monster images based on type - matching the HomePage icons
-const monsterImages = {
-  'F&D': '/images/Food_Monster.png',
-  'H': '/images/Nature_Monster.png',
-  'WB': '/images/Gym_Monster.png',
-  'W': '/images/Nature_Monster.png',
-  'WA': '/images/Electricity_Monster.png',
-  'N&B': '/images/Nature_Monster.png',
-  'T': '/images/Gym_Monster.png',
-  // Default image if type doesn't match
-  'default': '/images/Nature_Monster.png'
+// This is all for getting the images filepath
+const getMonsterImage = (type, rarity) => {
+  const typeImageMap = {
+    'F&D': 'food',     // Food and Drink
+    'H': 'health',     // Health
+    'WB': 'wellbeing', // Wellbeing
+    'W': 'water',      // Water
+    'WA': 'waste',     // Waste
+    'N&B': 'nature',   // Nature and Biodiversity
+    'T': 'transport'   // Transport
+  };
+  
+  // Maps the rarity to the number on the image
+  const rarityNumber = {
+    'C': '1', // Common
+    'R': '2', // Rare
+    'E': '3', // Epic
+    'L': '4'  // Legendary
+  };
+  
+  // Get the base type name
+  const baseType = typeImageMap[type] || 'nature';
+  
+  // Get rarity number or use commin represented as 1 as default
+  const rarityNum = rarityNumber[rarity] || '1';
+  
+  // Return the full image path
+  return `/images/${baseType}${rarityNum}.png`;
 };
 
-// Get CSS class based on monster rarity
+// Get CSS class based on monster rarity to make they look pretty
 const getRarityClass = (rarity) => {
   switch(rarity) {
     case 'C': return 'rarity-common';
@@ -29,7 +44,7 @@ const getRarityClass = (rarity) => {
   }
 };
 
-// Get human-readable type label
+// Get the type as a label
 const getTypeLabel = (type) => {
   const types = {
     'F&D': 'Food and Drink',
@@ -43,7 +58,7 @@ const getTypeLabel = (type) => {
   return types[type] || type;
 };
 
-// Calculate monster base score based on rarity and level
+// For part of the game logic
 const calculateMonsterBaseScore = (monster) => {
   const rarityMultiplier = {
     'C': 1,
@@ -52,123 +67,80 @@ const calculateMonsterBaseScore = (monster) => {
     'L': 5
   };
   
-  return (monster.level * rarityMultiplier[monster.rarity]) * 10;
+  return (monster.level * rarityMultiplier[monster.monster.rarity]) * 10;
 };
 
-// Draggable Monster Card Component
-const DraggableMonsterCard = ({ monster, index, inHand }) => {
-  const monsterImage = monsterImages[monster.type] || monsterImages.default;
+const SelectableMonsterCard = ({ monster, isSelected, isInHand, onToggleSelect }) => {
+  const monsterImage = getMonsterImage(monster.monster.type, monster.monster.rarity);
   const baseScore = calculateMonsterBaseScore(monster);
-  
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: 'monster',
-    item: { monster, index },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging()
-    }),
-    canDrag: () => !inHand, // Prevent dragging if already in hand
-    end: (item, monitor) => {
-      const dropResult = monitor.getDropResult();
-      if (item && dropResult && dropResult.dropped) {
-        // Successfully dropped
-      }
-    }
-  }));
   
   return (
     <div
-      ref={drag}
-      className={`monster-card ${isDragging ? 'is-dragging' : ''} ${inHand ? 'in-hand' : ''}`}
+      className={`monster-card ${isSelected ? 'is-selected' : ''} ${isInHand ? 'in-hand' : ''}`}
+      onClick={() => onToggleSelect(monster)}
     >
-      <div className={`monster-image-container ${getRarityClass(monster.rarity)}`}>
+      <div className={`monster-image-container ${getRarityClass(monster.monster.rarity)}`}>
         <img
           src={monsterImage}
-          alt={monster.name}
+          alt={monster.monster.name}
           className="monster-image"
-          onError={(e) => {
-            e.target.src = "/api/placeholder/400/400";
-          }}
         />
         <div className="rarity-badge">
-          {monster.rarity === 'C' ? 'Common' :
-           monster.rarity === 'R' ? 'Rare' :
-           monster.rarity === 'E' ? 'Epic' :
+          {monster.monster.rarity === 'C' ? 'Common' :
+           monster.monster.rarity === 'R' ? 'Rare' :
+           monster.monster.rarity === 'E' ? 'Epic' :
            'Legendary'}
         </div>
         <div className="level-badge">Lvl {monster.level}</div>
         <div className="score-badge">{baseScore} pts</div>
       </div>
       <div className="monster-info">
-        <h3 className="monster-name">{monster.name}</h3>
-        <p className="monster-type">{getTypeLabel(monster.type)}</p>
+        <h3 className="monster-name">{monster.monster.name}</h3>
+        <p className="monster-type">{getTypeLabel(monster.monster.type)}</p>
       </div>
     </div>
   );
 };
 
-// Monster in Hand Component
-const HandMonsterCard = ({ monster, index, removeFromHand }) => {
-  const monsterImage = monsterImages[monster.type] || monsterImages.default;
+const HandMonsterCard = ({ monster, onRemove }) => {
+  const monsterImage = getMonsterImage(monster.monster.type, monster.monster.rarity);
   const baseScore = calculateMonsterBaseScore(monster);
   
   return (
     <div className="hand-monster-card">
-      <div className={`monster-image-container ${getRarityClass(monster.rarity)}`}>
+      <div className={`monster-image-container ${getRarityClass(monster.monster.rarity)}`}>
         <img
           src={monsterImage}
-          alt={monster.name}
+          alt={monster.monster.name}
           className="monster-image"
-          onError={(e) => {
-            e.target.src = "/api/placeholder/400/400";
-          }}
         />
-        <button 
-          className="remove-button" 
-          onClick={() => removeFromHand(index)}
+        <button
+          className="remove-button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove(monster.id);
+          }}
+          aria-label="Remove monster from team"
         >
           ×
         </button>
         <div className="score-badge">{baseScore} pts</div>
       </div>
-      <div className="monster-name-small">{monster.name}</div>
+      <div className="monster-name-small">{monster.monster.name}</div>
     </div>
   );
 };
 
-// Drop Target for Monster Hand
-const MonsterHandDropZone = ({ onDrop, children }) => {
-  const [{ isOver }, drop] = useDrop(() => ({
-    accept: 'monster',
-    drop: (item) => {
-      onDrop(item.monster);
-      return { dropped: true };
-    },
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver()
-    })
-  }));
-  
-  return (
-    <div
-      ref={drop}
-      className={`hand-drop-zone ${isOver ? 'drop-zone-active' : ''}`}
-    >
-      {children}
-    </div>
-  );
-};
-
-// Calculate synergy bonuses based on monster combinations
 const calculateSynergies = (monstersInHand) => {
   const synergies = [];
   const typeCount = {};
   
   // Count types
   monstersInHand.forEach(monster => {
-    typeCount[monster.type] = (typeCount[monster.type] || 0) + 1;
+    typeCount[monster.monster.type] = (typeCount[monster.monster.type] || 0) + 1;
   });
   
-  // Check for type synergies (3 of same type)
+  // Check for type synergies.  3 of the same type this is for
   Object.entries(typeCount).forEach(([type, count]) => {
     if (count >= 3) {
       synergies.push({
@@ -180,10 +152,10 @@ const calculateSynergies = (monstersInHand) => {
   });
   
   // Check for rarity synergies
-  const hasCommon = monstersInHand.some(m => m.rarity === 'C');
-  const hasRare = monstersInHand.some(m => m.rarity === 'R');
-  const hasEpic = monstersInHand.some(m => m.rarity === 'E');
-  const hasLegendary = monstersInHand.some(m => m.rarity === 'L');
+  const hasCommon = monstersInHand.some(m => m.monster.rarity === 'C');
+  const hasRare = monstersInHand.some(m => m.monster.rarity === 'R');
+  const hasEpic = monstersInHand.some(m => m.monster.rarity === 'E');
+  const hasLegendary = monstersInHand.some(m => m.monster.rarity === 'L');
   
   if (hasCommon && hasRare && hasEpic) {
     synergies.push({
@@ -214,7 +186,6 @@ const calculateSynergies = (monstersInHand) => {
   return synergies;
 };
 
-// Main Game Component
 const MonsterChallengePage = () => {
   const [monsters, setMonsters] = useState([]);
   const [monstersInHand, setMonstersInHand] = useState([]);
@@ -224,284 +195,296 @@ const MonsterChallengePage = () => {
   const [currentScore, setCurrentScore] = useState(0);
   const [synergies, setSynergies] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   
-  // Mock data for development
-  const sampleMonsters = [
-    { id: 1, name: "EcoDragon", type: "N&B", rarity: "L", level: 3 },
-    { id: 2, name: "WaterSprite", type: "W", rarity: "R", level: 4 },
-    { id: 3, name: "FoodGuardian", type: "F&D", rarity: "C", level: 2 },
-    { id: 4, name: "TreeSpirit", type: "N&B", rarity: "E", level: 5 },
-    { id: 5, name: "WasteWizard", type: "WA", rarity: "R", level: 4 },
-    { id: 6, name: "HealthHero", type: "H", rarity: "C", level: 3 },
-    { id: 7, name: "TransportTitan", type: "T", rarity: "E", level: 6 },
-    { id: 8, name: "WellbeingWarrior", type: "WB", rarity: "R", level: 5 },
-    { id: 9, name: "NatureNymph", type: "N&B", rarity: "C", level: 2 },
-    { id: 10, name: "FoodFairy", type: "F&D", rarity: "R", level: 7 },
-    { id: 11, name: "WaterWizard", type: "W", rarity: "E", level: 8 },
-    { id: 12, name: "RecycleRanger", type: "WA", rarity: "C", level: 4 },
-  ];
-  
-  const sampleChallenge = {
-    id: 1,
-    name: "Monsters Challenge",
-    target_score: 350
+  const getAccessToken = () => {
+    return localStorage.getItem('accessToken');
   };
   
-  // Fetch monsters and active challenge
+  // Fetch API helper with auth headers so that you don't have to keep writting it all
+  const fetchWithAuth = async (endpoint, options = {}) => {
+    const defaultOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getAccessToken()}`
+      },
+    };
+    
+    const response = await fetch(`${BACKEND}${endpoint}`, {
+      ...defaultOptions,
+      ...options,
+    });
+    
+    if (!response.ok) {
+      throw new Error(`API request failed: ${response.statusText}`);
+    }
+    
+    return await response.json();
+  };
+  
   const fetchData = async () => {
     try {
-      // When endpoints are ready, replace with actual API calls
-      // const response = await fetch(`${BACKEND}/api/player-monsters/`, {
-      //   headers: {
-      //     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-      //   }
-      // });
-      // const data = await response.json();
-      // setMonsters(data);
+      setLoading(true);
       
-      // const challengeResponse = await fetch(`${BACKEND}/api/game-challenge/active/`, {
-      //   headers: {
-      //     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-      //   }
-      // });
-      // const challengeData = await challengeResponse.json();
-      // setChallenge(challengeData);
+      const playerMonsters = await fetchWithAuth('/monsters/get-player-monsters/');
+      setMonsters(playerMonsters);
       
-      // For development, use sample data
-      setMonsters(sampleMonsters);
-      setChallenge(sampleChallenge);
+      // Mock data as this doenst exist in the backend yet
+      const challengeData = {
+        id: 1,
+        name: "Monsters Challenge",
+        target_score: 350
+      };
+      setChallenge(challengeData);
+      
       setLoading(false);
     } catch (err) {
+      console.error("Error fetching data:", err);
       setError('Failed to load game data. Please try again later.');
       setLoading(false);
     }
   };
   
-  // Calculate current score whenever hand changes
-  useEffect(() => {
-    if (monstersInHand.length === 0) {
+  const calculateScore = async (monsters) => {
+    if (monsters.length === 0) {
       setCurrentScore(0);
       setSynergies([]);
       return;
     }
     
-    // Calculate base score from monsters
-    const baseScore = monstersInHand.reduce((total, monster) => {
-      return total + calculateMonsterBaseScore(monster);
-    }, 0);
-    
-    // Calculate synergy bonuses
-    const currentSynergies = calculateSynergies(monstersInHand);
-    const synergyBonus = currentSynergies.reduce((total, synergy) => {
-      return total + synergy.bonus;
-    }, 0);
-    
-    setSynergies(currentSynergies);
-    setCurrentScore(baseScore + synergyBonus);
-  }, [monstersInHand]);
+    try {
+      const response = await fetchWithAuth('/game/calculate-score/', {
+        method: 'POST',
+        body: JSON.stringify({
+          monster_ids: monsters.map(monster => monster.id)
+        })
+      });
+      
+      setCurrentScore(response.score);
+      
+      // The synergies are done in the frontend becaue the backend has dont it yet but it will do
+      const currentSynergies = calculateSynergies(monsters);
+      setSynergies(currentSynergies);
+      
+    } catch (err) {
+      console.error("Error calculating score:", err);
+      // Fallback to front-end calculation
+      const baseScore = monsters.reduce((total, monster) => {
+        return total + calculateMonsterBaseScore(monster);
+      }, 0);
+      
+      const currentSynergies = calculateSynergies(monsters);
+      const synergyBonus = currentSynergies.reduce((total, synergy) => {
+        return total + synergy.bonus;
+      }, 0);
+      
+      setSynergies(currentSynergies);
+      setCurrentScore(baseScore + synergyBonus);
+    }
+  };
   
-  // Initial data load
   useEffect(() => {
     fetchData();
   }, []);
   
-  // Add monster to hand
-  const addMonsterToHand = (monster) => {
-    // Prevent duplicates in hand
-    if (monstersInHand.some(m => m.id === monster.id)) {
-      return;
-    }
+  useEffect(() => {
+    calculateScore(monstersInHand);
+  }, [monstersInHand]);
+  
+  const toggleMonsterSelection = (monster) => {
+    const isInHand = monstersInHand.some(m => m.id === monster.id);
     
-    // Limit hand size to 5 monsters
-    if (monstersInHand.length >= 5) {
-      setError('Your hand is full! Remove a monster first.');
-      setTimeout(() => setError(''), 3000);
-      return;
+    if (isInHand) {
+      // Remove from hand if already selected
+      removeFromHand(monster.id);
+    } else {
+      // Add to hand if not selected and hand isn't full
+      if (monstersInHand.length >= 5) {
+        setError('Your team is full! Remove a monster first.');
+        setTimeout(() => setError(''), 3000);
+        return;
+      }
+      
+      setMonstersInHand([...monstersInHand, monster]);
     }
-    
-    setMonstersInHand([...monstersInHand, monster]);
   };
   
   // Remove monster from hand
-  const removeFromHand = (index) => {
-    const newHand = [...monstersInHand];
-    newHand.splice(index, 1);
-    setMonstersInHand(newHand);
+  const removeFromHand = (monsterId) => {
+    setMonstersInHand(monstersInHand.filter(m => m.id !== monsterId));
   };
   
-  // Submit challenge attempt
   const submitChallenge = async () => {
     if (monstersInHand.length === 0) {
-      setError('You need to add monsters to your hand first!');
+      setError('You need to add monsters to your team first!');
       setTimeout(() => setError(''), 3000);
       return;
     }
     
     try {
-      // When endpoint is ready, replace with actual API call
-      // const response = await fetch(`${BACKEND}/api/game/submit-challenge/`, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-      //   },
-      //   body: JSON.stringify({
-      //     challenge_id: challenge.id,
-      //     monster_ids: monstersInHand.map(m => m.id)
-      //   })
-      // });
-      // const result = await response.json();
+      const result = await fetchWithAuth('/game/submit-challenge/', {
+        method: 'POST',
+        body: JSON.stringify({
+          challenge_id: challenge.id,
+          monster_ids: monstersInHand.map(m => m.id)
+        })
+      });
       
-      // For development, simulate result
-      const success = currentScore >= (challenge?.target_score || 0);
-      
-      if (success) {
+      if (result.success) {
         setShowSuccess(true);
+        setSuccessMessage(result.message || 'Challenge completed!');
+        
+        // Update the monsters with the new levels
+        if (result.monsters_leveled && result.monsters_leveled.length > 0) {
+          // Refresh monsters data after successful challenge
+          const updatedMonsters = await fetchWithAuth('/monsters/get-player-monsters/');
+          setMonsters(updatedMonsters);
+        }
+        
         setTimeout(() => {
           setShowSuccess(false);
           setMonstersInHand([]);
         }, 3000);
       } else {
-        setError('Not enough score to complete the challenge. Try a different combination!');
+        setError(result.message || 'Not enough score to complete the challenge. Try a different combination!');
         setTimeout(() => setError(''), 3000);
       }
     } catch (err) {
+      console.error("Error submitting challenge:", err);
       setError('Failed to submit challenge. Please try again.');
       setTimeout(() => setError(''), 3000);
     }
   };
   
-  // Reset the game
-  const resetGame = () => {
+  const resetTeam = () => {
     setMonstersInHand([]);
   };
   
   return (
-    <DndProvider backend={HTML5Backend}>
-      <div className="monsters-container">
-        <div className="monsters-content">
-          {/* Challenge Info Card */}
-          <div className="challenge-card">
-            <div className="challenge-header">
-              <h2 className="challenge-title">
-                {challenge ? challenge.name : 'Loading Challenge...'}
-              </h2>
-            </div>
-            {challenge && (
-              <div className="challenge-info">
-                <div className="target-score-container">
-                  <div className="target-score-label">Target Score:</div>
-                  <div className="target-score-value">{challenge.target_score}</div>
+    <div className="monsters-container">
+      <div className="monsters-content">
+        {/* Challenge Info Card */}
+        <div className="challenge-card">
+          <div className="challenge-header">
+            <h2 className="challenge-title">
+              {challenge ? challenge.name : 'Loading Challenge...'}
+            </h2>
+          </div>
+          {challenge && (
+            <div className="challenge-info">
+              <div className="target-score-container">
+                <div className="target-score-label">Target Score:</div>
+                <div className="target-score-value">{challenge.target_score}</div>
+              </div>
+              <div className="score-gauge-container">
+                <div className="score-gauge-background">
+                  <div
+                    className="score-gauge-fill"
+                    style={{
+                      width: `${Math.min(100, (currentScore / challenge.target_score) * 100)}%`,
+                      backgroundColor: currentScore >= challenge.target_score ? 'var(--secondary-color)' : 'var(--primary-color)'
+                    }}
+                  ></div>
                 </div>
-                <div className="score-gauge-container">
-                  <div className="score-gauge-background">
-                    <div 
-                      className="score-gauge-fill" 
-                      style={{ 
-                        width: `${Math.min(100, (currentScore / challenge.target_score) * 100)}%`,
-                        backgroundColor: currentScore >= challenge.target_score ? 'var(--secondary-color)' : 'var(--primary-color)' 
-                      }}
-                    ></div>
-                  </div>
-                  <div className="current-score-value">Current Score: {currentScore}</div>
+                <div className="current-score-value">Current Score: {currentScore}</div>
+              </div>
+            </div>
+          )}
+        </div>
+        
+        {/* Success Message */}
+        {showSuccess && (
+          <div className="success-message">
+            <h3>Challenge Completed!</h3>
+            <p>{successMessage}</p>
+          </div>
+        )}
+        
+        {/* Error Message */}
+        {error && (
+          <div className="error-message">{error}</div>
+        )}
+        
+        {/* Game Layout */}
+        <div className="game-area">
+          {/* Team Area */}
+          <div className="hand-area">
+            <h3 className="area-title">Your Team</h3>
+            <div className="team-container">
+              {monstersInHand.length === 0 ? (
+                <div className="empty-team-message">
+                  Tap on monsters below to add them to your team (max 5)
+                </div>
+              ) : (
+                <div className="hand-monsters">
+                  {monstersInHand.map((monster) => (
+                    <HandMonsterCard
+                      key={monster.id}
+                      monster={monster}
+                      onRemove={removeFromHand}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            {/* Synergy Bonuses */}
+            {synergies.length > 0 && (
+              <div className="synergy-container">
+                <h3 className="synergy-title">Team Synergies</h3>
+                <div className="synergy-list">
+                  {synergies.map((synergy, index) => (
+                    <div key={index} className="synergy-item">
+                      <div className="synergy-name">{synergy.name}</div>
+                      <div className="synergy-description">{synergy.description}</div>
+                      <div className="synergy-bonus">+{synergy.bonus} pts</div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
+            
+            {/* Action Buttons */}
+            <div className="action-buttons">
+              <button
+                className="game-button submit-button"
+                onClick={submitChallenge}
+                disabled={monstersInHand.length === 0}
+              >
+                Submit Challenge
+              </button>
+              <button
+                className="game-button reset-button"
+                onClick={resetTeam}
+                disabled={monstersInHand.length === 0}
+              >
+                Reset Team
+              </button>
+            </div>
           </div>
           
-          {/* Success Message */}
-          {showSuccess && (
-            <div className="success-message">
-              <h3>Challenge Completed!</h3>
-              <p>Your monsters gained experience!</p>
-            </div>
-          )}
-          
-          {/* Error Message */}
-          {error && (
-            <div className="error-message">{error}</div>
-          )}
-          
-          {/* Monster Hand Area */}
-          <div className="game-area">
-            <div className="hand-area">
-              <h3 className="area-title">Your Hand</h3>
-              <MonsterHandDropZone onDrop={addMonsterToHand}>
-                {monstersInHand.length === 0 ? (
-                  <div className="empty-hand-message">
-                    Drag monsters here to build your team (max 5)
-                  </div>
-                ) : (
-                  <div className="hand-monsters">
-                    {monstersInHand.map((monster, index) => (
-                      <HandMonsterCard 
-                        key={monster.id} 
-                        monster={monster} 
-                        index={index}
-                        removeFromHand={removeFromHand}
-                      />
-                    ))}
-                  </div>
-                )}
-              </MonsterHandDropZone>
-              
-              {/* Synergy Bonuses */}
-              {synergies.length > 0 && (
-                <div className="synergy-container">
-                  <h3 className="synergy-title">Team Synergies</h3>
-                  <div className="synergy-list">
-                    {synergies.map((synergy, index) => (
-                      <div key={index} className="synergy-item">
-                        <div className="synergy-name">{synergy.name}</div>
-                        <div className="synergy-description">{synergy.description}</div>
-                        <div className="synergy-bonus">+{synergy.bonus} pts</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {/* Action Buttons */}
-              <div className="action-buttons">
-                <button 
-                  className="game-button submit-button"
-                  onClick={submitChallenge}
-                  disabled={monstersInHand.length === 0}
-                >
-                  Submit Challenge
-                </button>
-                <button 
-                  className="game-button reset-button"
-                  onClick={resetGame}
-                  disabled={monstersInHand.length === 0}
-                >
-                  Reset Hand
-                </button>
-              </div>
-            </div>
-            
-            {/* Monster Collection */}
-            <div className="collection-area">
-              <h3 className="area-title">Your Monsters</h3>
-              {loading ? (
-                <div className="loading-message">Loading your monsters...</div>
-              ) : (
-               <div className="collection-grid">
-                 {monsters.map((monster, index) => (
-                   <DraggableMonsterCard
-                     key={monster.id}
-                     monster={monster}
-                     index={index}
-                     inHand={monstersInHand.some(m => m.id === monster.id)}
-                   />
-                 ))}
-               </div>
-              )}
-            </div>
+          {/* Monster Collection */}
+          <div className="collection-area">
+            <h3 className="area-title">Your Monsters</h3>
+            {loading ? (
+              <div className="loading-message">Loading your monsters...</div>
+            ) : (
+             <div className="collection-grid">
+               {monsters.map((monster) => (
+                 <SelectableMonsterCard
+                   key={monster.id}
+                   monster={monster}
+                   isSelected={false}
+                   isInHand={monstersInHand.some(m => m.id === monster.id)}
+                   onToggleSelect={toggleMonsterSelection}
+                 />
+               ))}
+             </div>
+            )}
           </div>
         </div>
       </div>
-    </DndProvider>
+    </div>
   );
 };
 
