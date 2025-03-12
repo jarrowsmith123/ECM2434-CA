@@ -59,20 +59,60 @@ const getTypeLabel = (type) => {
 };
 
 // For part of the game logic
-const calculateMonsterBaseScore = (monster) => {
-  const rarityMultiplier = {
-    'C': 1,
-    'R': 2,
-    'E': 3,
-    'L': 5
-  };
+const calculateMonsterScore = (monsters) => {
+  if (!monsters || monsters.length === 0 || monsters.length > 5) {
+    return 0;
+  }
   
-  return (monster.level * rarityMultiplier[monster.monster.rarity]) * 10;
+  // Check for duplicate monsters
+  const monsterIds = monsters.map(monster => monster.id);
+  if (new Set(monsterIds).size !== monsterIds.length) {
+    return 0;
+  }
+  
+  const BIO_DIVERSITY_MULTIPLIER = 1.1;
+  const WELL_BEING_MULTIPLIER = 1;
+  
+  let score = 0;
+  let multiplier = 1;
+  
+  let monsterLevels = monsters.map(monster => monster.level);
+  const typesInPlay = monsters.map(monster => monster.monster.type);
+  
+  // For any waste monsters in play, swap the lowest level monster with that waste card's level
+  if (typesInPlay.includes('WA')) {
+    const wasteCards = monsters.filter(monster => monster.monster.type === 'WA');
+    
+    for (const wasteCard of wasteCards) {
+      const minLevel = Math.min(...monsterLevels);
+      const minIndex = monsterLevels.indexOf(minLevel);
+      monsterLevels.splice(minIndex, 1);
+      monsterLevels.push(wasteCard.level);
+    }
+  }
+  
+  // If at least one of the monster is nature&biodiversity, add a multiplier to all scores
+  if (typesInPlay.includes('N&B')) {
+    multiplier = Math.pow(BIO_DIVERSITY_MULTIPLIER, typesInPlay.length);
+  }
+  
+  // If at least one of the monster is well-being, add a flat rate to each score
+  if (typesInPlay.includes('WB')) {
+    score += typesInPlay.length * WELL_BEING_MULTIPLIER;
+  }
+  
+  // Add all monster levels to the score
+  for (const level of monsterLevels) {
+    score += level;
+  }
+  
+  // Convert to integer as done in backend
+  return Math.floor(score * multiplier);
 };
 
 const SelectableMonsterCard = ({ monster, isSelected, isInHand, onToggleSelect }) => {
   const monsterImage = getMonsterImage(monster.monster.type, monster.monster.rarity);
-  const baseScore = calculateMonsterBaseScore(monster);
+  const baseScore = monster.level;
   
   return (
     <div
@@ -104,7 +144,7 @@ const SelectableMonsterCard = ({ monster, isSelected, isInHand, onToggleSelect }
 
 const HandMonsterCard = ({ monster, onRemove }) => {
   const monsterImage = getMonsterImage(monster.monster.type, monster.monster.rarity);
-  const baseScore = calculateMonsterBaseScore(monster);
+  const baseScore = monster.level;
   
   return (
     <div className="hand-monster-card">
@@ -132,6 +172,8 @@ const HandMonsterCard = ({ monster, onRemove }) => {
 };
 
 const calculateSynergies = (monstersInHand) => {
+  // This function is no longer used for score calculation
+  // But we'll keep it for UI display purposes only
   const synergies = [];
   const typeCount = {};
   
@@ -146,40 +188,36 @@ const calculateSynergies = (monstersInHand) => {
       synergies.push({
         name: `${getTypeLabel(type)} Trio`,
         description: `3 or more ${getTypeLabel(type)} monsters`,
-        bonus: 250
+        bonus: 0 // No actual bonus, just for display
       });
     }
   });
   
-  // Check for rarity synergies
-  const hasCommon = monstersInHand.some(m => m.monster.rarity === 'C');
-  const hasRare = monstersInHand.some(m => m.monster.rarity === 'R');
-  const hasEpic = monstersInHand.some(m => m.monster.rarity === 'E');
-  const hasLegendary = monstersInHand.some(m => m.monster.rarity === 'L');
+  // Check for actual backend synergies
+  const typesInPlay = monstersInHand.map(monster => monster.monster.type);
   
-  if (hasCommon && hasRare && hasEpic) {
+  if (typesInPlay.includes('N&B')) {
     synergies.push({
-      name: 'Rarity Ladder',
-      description: 'Common + Rare + Epic monsters',
-      bonus: 200
+      name: 'Biodiversity Multiplier',
+      description: `Nature & Biodiversity multiplies score by ${Math.pow(1.1, typesInPlay.length).toFixed(2)}`,
+      bonus: 0 // Just for display, actual bonus calculated in score
     });
   }
   
-  if (hasLegendary && monstersInHand.length >= 3) {
+  if (typesInPlay.includes('WB')) {
     synergies.push({
-      name: 'Legendary Leadership',
-      description: 'Legendary monster with at least 2 followers',
-      bonus: 300
+      name: 'Wellbeing Bonus',
+      description: `Wellbeing adds +${typesInPlay.length} to score`,
+      bonus: typesInPlay.length
     });
   }
   
-  // Check for level synergies
-  const highLevelCount = monstersInHand.filter(m => m.level >= 5).length;
-  if (highLevelCount >= 2) {
+  if (typesInPlay.includes('WA')) {
+    const wasteCards = monstersInHand.filter(monster => monster.monster.type === 'WA');
     synergies.push({
-      name: 'Experienced Team',
-      description: '2 or more monsters level 5+',
-      bonus: highLevelCount * 50
+      name: 'Waste Management',
+      description: `${wasteCards.length} Waste card(s) replace lowest levels`,
+      bonus: 0 // Just for display
     });
   }
   
@@ -269,17 +307,11 @@ const MonsterChallengePage = () => {
     } catch (err) {
       console.error("Error calculating score:", err);
       // Fallback to front-end calculation
-      const baseScore = monsters.reduce((total, monster) => {
-        return total + calculateMonsterBaseScore(monster);
-      }, 0);
-      
+      const backendScore = calculateMonsterScore(monsters);
       const currentSynergies = calculateSynergies(monsters);
-      const synergyBonus = currentSynergies.reduce((total, synergy) => {
-        return total + synergy.bonus;
-      }, 0);
       
       setSynergies(currentSynergies);
-      setCurrentScore(baseScore + synergyBonus);
+      setCurrentScore(backendScore);
     }
   };
   
@@ -322,7 +354,7 @@ const MonsterChallengePage = () => {
     }
     
     try {
-      const result = await fetchWithAuth('/game/submit-challenge/', {
+      const result = await fetchWithAuth('/game/submit-attempt/', {
         method: 'POST',
         body: JSON.stringify({
           challenge_id: challenge.id,
