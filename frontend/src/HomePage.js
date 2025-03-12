@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Circle, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
+import MonsterCollectionPopup from './MonsterCollectionPopup';
 
 const userIcon = new L.Icon({
   iconUrl: 'https://static.vecteezy.com/system/resources/thumbnails/019/897/155/small/location-pin-icon-map-pin-place-marker-png.png', // just using this one from the web temporarily
@@ -327,6 +328,8 @@ const HomePage = () => {
   const [monsters, setMonsters] = useState(mockMonsters);
   const [selectedMonster, setSelectedMonster] = useState(null);
   const [isManualMode, setIsManualMode] = useState(false);
+  const [showCollectionPopup, setShowCollectionPopup] = useState(false);
+  const [collectedMonster, setCollectedMonster] = useState(null);
   
   // Check for initial user location
   useEffect(() => {
@@ -392,16 +395,31 @@ const HomePage = () => {
 
   const handleCollect = () => {
     if (selectedMonster && canCollect) {
-      // Need to implement that backend for this but i thnk this is alright for now because you shouldnt be able to collect a monster twice.
-      setMonsters(prevMonsters =>
-        prevMonsters.map(monster =>
-          monster.id === selectedMonster.id
-            ? { ...monster, collectible: false }
-            : monster
-        )
-      );
-      setCanCollect(false);
+      setCollectedMonster(selectedMonster);
+      setShowCollectionPopup(true);
     }
+  };
+
+  const handleClosePopup = () => {
+    setShowCollectionPopup(false);
+  };
+
+  const handleMonsterCollected = (collectedMonster) => {
+    // Need to implement that backend for this but i thnk this is alright for now because you shouldnt be able to collect a monster twice.
+    setMonsters(prevMonsters =>
+      prevMonsters.map(monster =>
+        monster.id === selectedMonster.id
+          ? { ...monster, collectible: false }
+          : monster
+      )
+    );
+    
+    setCanCollect(false);
+    
+    // Close the popup after a short delay
+    setTimeout(() => {
+      setShowCollectionPopup(false);
+    }, 3000);
   };
 
   const handleMonsterClick = (monster) => {
@@ -517,6 +535,15 @@ const HomePage = () => {
       >
         {isManualMode ? '📍' : '🔄'}
       </button>
+
+      {/* Monster Collection Popup */}
+      {showCollectionPopup && collectedMonster && (
+        <MonsterCollectionPopup
+          monster={collectedMonster}
+          onClose={handleClosePopup}
+          onCollect={handleMonsterCollected}
+        />
+      )}
     </div>
   );
 };
