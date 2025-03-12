@@ -41,3 +41,4 @@ class PlayerMonster(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s {self.monster.name} (Level: {self.level})"
+
