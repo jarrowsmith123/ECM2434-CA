@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "game",
     "location",
-    "monsters"
+    "monsters",
+    "quiz"
 ]
 
 MIDDLEWARE = [
