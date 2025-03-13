@@ -10,20 +10,20 @@ from django.db.models import Q
 @permission_classes([AllowAny])
 def register(request):
     try:
+        print(f"Received registration data: {request.data}")  # Debug log
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(status=status.HTTP_201_CREATED)
+            return Response({"message": "User created successfully"}, status=status.HTTP_201_CREATED)
             
-        if serializer.errors:
-            return Response(
-                {'error': serializer.errors},
-                status=status.HTTP_409_CONFLICT
-            )
-        
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        print(f"Serializer errors: {serializer.errors}")  # Debug log
+        return Response(
+            {'error': serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST
+        )
         
     except Exception as e:
+        print(f"Exception in registration: {str(e)}")  # Debug log
         return Response(
             {'error': str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR

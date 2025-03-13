@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Circle, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
+import Tutorial from './Tutorial';
 
 const userIcon = new L.Icon({
   iconUrl: 'https://static.vecteezy.com/system/resources/thumbnails/019/897/155/small/location-pin-icon-map-pin-place-marker-png.png', // just using this one from the web temporarily
@@ -327,9 +328,24 @@ const HomePage = () => {
   const [monsters, setMonsters] = useState(mockMonsters);
   const [selectedMonster, setSelectedMonster] = useState(null);
   const [isManualMode, setIsManualMode] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [tutorialComplete, setTutorialComplete] = useState(false);
   
   // Check for initial user location
   useEffect(() => {
+    const checkTutorialStatus = async () => {
+      try {
+        const response = await fetch('/api/tutorial-status/');
+        const data = await response.json();
+
+        if (!data.hasSeenTutorial) {
+          setShowTutorial(true);
+        }
+      } catch (error) {
+        console.error('Error checking tutorial status:', error);
+      }
+    };
+    checkTutorialStatus();
     if (navigator.geolocation && !isManualMode) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -438,7 +454,24 @@ const HomePage = () => {
     }
     setIsManualMode(!isManualMode);
   };
-    
+  
+  const handleTutorialComplete = async () => {
+    setTutorialComplete(true);
+    setShowTutorial(false);
+
+    try {
+      await fetch('/api/tutorial-status/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ hasSeenTutorial: true }),
+      });
+    } catch (error) {
+      console.error('Error updating tutorial status:', error);
+    }
+  }
+
   return (
     <div className="map-container">
       <MapContainer
