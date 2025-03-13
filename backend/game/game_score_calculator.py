@@ -39,8 +39,8 @@ class GameScoreCalculator:
         if 'N&B' in types_in_play:
             multiplier = bio_diversity_multiplier ** len(types_in_play)
 
-        # If at least one of the monster is well-being, add a flat rate to each score
-        if 'WB' in types_in_play:
+        # If at least one of the monster is Health and well-being, add a flat rate to each score
+        if 'HWB' in types_in_play:
             score += len(types_in_play) * well_being_multiplier
 
         for level in monster_levels:
