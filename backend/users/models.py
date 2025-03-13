@@ -6,6 +6,7 @@ from django.dispatch import receiver
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile') # include details from the user model
     game_won_count = models.PositiveIntegerField(default=0)
+    has_seen_tutorial = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -31,7 +32,3 @@ class Friendship(models.Model):
     
     def __str__(self):
         return f"Friend Request: {self.sender.username} → {self.receiver.username} ({self.status})"
-
-    
-
-
