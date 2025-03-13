@@ -117,7 +117,22 @@ def get_friends(request):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
     
-    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def search_user(request):
+    try:
+        query_string = request.GET.get('search', '')
+        users = User.objects.filter(username__icontains=query_string) # 
+        limit =  request.GET.get('limit', 1) # deaults the limit to 1
+        matching_users = users.filter(username__icontains=query_string)[:limit]
+        serializer = UserSerializer(matching_users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response(
+            {'error': str(e)},
+            # i love defaulting to 500 error and not being more specific, we should have started our error handling sooner lol
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 @api_view(['GET', 'PATCH'])
 @permission_classes([IsAuthenticated])
