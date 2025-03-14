@@ -8,3 +8,5 @@ class GameChallenge(models.Model):
 
     def __str__(self):
         return f"Target Score: {self.target_score}"
+    
+

@@ -31,4 +31,5 @@ urlpatterns = [
     path('api/game/', include('game.urls')),
     path('api/monsters/', include('monsters.urls')),
     path('api/location/', include('location.urls')),
+    path('api/quiz/', include('quiz.urls')),
 ]

@@ -13,12 +13,11 @@ class Monster(models.Model):
 
     TYPES = [
         ('F&D', 'Food and Drink'),
-        ('H', 'Health'),
-        ('WB', 'Wellbeing'),
+        ('HWB', 'Health and Wellbeing'),
         ('W', 'Water'),
         ('WA', 'Waste'),
         ('N&B', 'Nature and Biodiversity'),
-        ('T', 'Transport'),
+        ('E', 'Energy'),
     ]
 
     name = models.CharField(max_length=20)
@@ -41,3 +40,4 @@ class PlayerMonster(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s {self.monster.name} (Level: {self.level})"
+
