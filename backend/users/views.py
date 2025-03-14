@@ -163,3 +163,27 @@ def delete_user(request):
             {'error': 'failed to delete account'},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+  
+#allows a user to see all incoming friend requests that are still pending 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def view_friend_requests(request):
+    try:
+        incoming_requests = Friendship.objects.filter(receiver=request.user, status='pending')
+        serializer = FriendshipSerializer(incoming_requests, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+#allows users to delete an existing friendship or cancel a friend request
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_friend(request, friend_request_id):
+    try:
+        friend_request = Friendship.objects.get(id=friend_request_id, status='accepted')
+        if friend_request.sender == request.user or friend_request.receiver == request.user:
+            friend_request.delete()
+            return Response('Friendship deleted successfully')
+        return Response(status=status.HTTP_403_FORBIDDEN)
+    except Friendship.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
