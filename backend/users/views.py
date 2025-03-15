@@ -5,6 +5,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import UserSerializer, FriendshipSerializer
 from .models import User, Friendship
 from django.db.models import Q
+from django.shortcuts import render
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -163,3 +164,7 @@ def delete_user(request):
             {'error': 'failed to delete account'},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+def leaderboard(request):
+    ordered_players = User.objects.all().order_by('-game_won_count')
+    return [(player.user.username, player.game_won_count) for player in ordered_players]

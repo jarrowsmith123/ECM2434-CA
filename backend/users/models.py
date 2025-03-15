@@ -11,6 +11,8 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s profile"
+    def get_points(self):
+        return self.game_won_count
 
 # Create a new user profile automatically when a new user is created
 @receiver(post_save, sender=User)
