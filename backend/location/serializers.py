@@ -6,7 +6,7 @@ class LocationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Location
-        fields = ['id', 'location_name', 'latitude', 'longitude', 'created_at', 'updated_at','distance_threshold']
+        fields = ['id', 'location_name', 'latitude', 'longitude', 'type', 'created_at', 'updated_at','distance_threshold']
         read_only_fields = ['id', 'created_at', 'updated_at']
 
     def validate(self, data):

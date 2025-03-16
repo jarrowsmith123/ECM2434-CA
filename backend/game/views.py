@@ -93,3 +93,16 @@ def create_challenge(request):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_next_challenge(request):
+    user = request.user
+    game_won_count = user.user_profile.games_won_count
+    return_challenge_id = game_won_count + 1
+    challenge = GameChallenge.objects.filter(id=return_challenge_id).first()
+    if challenge:
+        serializer = GameChallengeSerializer(challenge)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response({'error': 'No challenge found'}, status=status.HTTP_404_NOT_FOUND)
