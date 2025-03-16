@@ -22,20 +22,20 @@ const LoginPage = () => {
     if(!isLogin && !policyChecked) {
       setError("You must accept the Terms and Conditions to create an account");
       setLoading(false);
-      return
+      return;
     }
-
+  
     const formData = new FormData(e.target);
     const data = {
       username: formData.get('username'),
       password: formData.get('password'),
       ...(isLogin ? {} : { email: formData.get('email') })
     };
-
+  
     try {
       const endpoint = BACKEND + (isLogin ? '/api/token/' : '/api/user/register/');
         
-      console.log(data);
+      console.log("Sending data:", data);
         
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -44,24 +44,57 @@ const LoginPage = () => {
         },
         body: JSON.stringify(data)
       });
+      let responseData;
+      try {
+        responseData = await response.json();
+      } catch (e) {
+        responseData = {};
+      }
+      
+      console.log("Response:", response.status, responseData);
 
       if (!response.ok) {
-        throw new Error('Authentication failed');
+        if (responseData && responseData.error) {
+          if (typeof responseData.error === 'object') {
+            const errorMessages = [];
+            for (const field in responseData.error) {
+              if (Array.isArray(responseData.error[field])) {
+                errorMessages.push(`${responseData.error[field].join(' ')}`);
+              } else {
+                errorMessages.push(`${responseData.error[field]}`);
+              }
+            }
+            throw new Error(errorMessages.join(' '));
+          } else {
+            throw new Error(responseData.error);
+          }
+        } else if (responseData && (responseData.username || responseData.email || responseData.password)) {
+          const messages = [];
+          if (responseData.username) {
+            messages.push(responseData.username[0]);
+          }
+          if (responseData.email) {
+            messages.push(responseData.email[0]);
+          }
+          if (responseData.password) {
+            messages.push(responseData.password[0]);
+          }
+          throw new Error(messages.join(' '));
+        } else {
+          throw new Error(`Authentication failed`);
+        }
       }
 
-      const result = await response.json();
-      // look back over this
       if (isLogin) {
-        localStorage.setItem('accessToken', result.access);
-        localStorage.setItem('refreshToken', result.refresh);
-        // Navigate to home page after successful login
+        localStorage.setItem('accessToken', responseData.access);
+        localStorage.setItem('refreshToken', responseData.refresh);
         navigate('/home');
       } else {
-        // After successful registration, switch to login mode
         setIsLogin(true);
         setError('Registration successful! Please log in.');
       }
     } catch (err) {
+      console.error('Authentication error:', err);
       setError(err.message);
     } finally {
       setLoading(false);
