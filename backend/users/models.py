@@ -6,7 +6,6 @@ from django.dispatch import receiver
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile') # include details from the user model
     game_won_count = models.PositiveIntegerField(default=0)
-    is_admin = models.BooleanField(default=False)  # Added field to track admin status
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
