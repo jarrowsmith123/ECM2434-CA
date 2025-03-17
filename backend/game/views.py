@@ -61,7 +61,7 @@ def submit_challenge_attempt(request):
                 monster.level += 1
                 monster.save()
                 user_profile = request.user.profile
-                user_profile.games_won_count += 1
+                user_profile.game_won_count += 1
                 user_profile.save()
 
             return Response({
@@ -98,7 +98,7 @@ def create_challenge(request):
 @permission_classes([IsAuthenticated])
 def get_next_challenge(request):
     user = request.user
-    game_won_count = user.user_profile.games_won_count
+    game_won_count = user.profile.game_won_count
     return_challenge_id = game_won_count + 1
     challenge = GameChallenge.objects.filter(id=return_challenge_id).first()
     if challenge:

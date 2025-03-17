@@ -25,14 +25,8 @@ const monsterIcons = {
     iconAnchor: [20, 40],
     popupAnchor: [0, -40]
   }),
-  'H': new L.Icon({
+  'HWB': new L.Icon({
     iconUrl: '/images/healthEgg.png',
-    iconSize: [50, 50],
-    iconAnchor: [20, 40],
-    popupAnchor: [0, -40]
-  }),
-  'WB': new L.Icon({
-    iconUrl: '/images/wellbeingEgg.png',
     iconSize: [50, 50],
     iconAnchor: [20, 40],
     popupAnchor: [0, -40]
@@ -69,72 +63,7 @@ const monsterIcons = {
   })
 };
 
-// just come mock data while the backend doesnt support it
-const mockMonsters = [
-  {
-    id: 1,
-    name: "WaterWarrior",
-    type: "W",
-    rarity: "C",
-    latitude: 50.736,
-    longitude: -3.532,
-    collectible: true
-  },
-  {
-    id: 2,
-    name: "WasteWizard",
-    type: "WA",
-    rarity: "R",
-    latitude: 50.734,
-    longitude: -3.535,
-    collectible: true
-  },
-  {
-    id: 3,
-    name: "NatureNinja",
-    type: "N&B",
-    rarity: "E",
-    latitude: 50.733,
-    longitude: -3.530,
-    collectible: true
-  },
-  {
-    id: 4,
-    name: "TransportTyrant",
-    type: "T",
-    rarity: "L",
-    latitude: 50.737,
-    longitude: -3.536,
-    collectible: true
-  },
-  {
-    id: 5,
-    name: "FoodFighter",
-    type: "F&D",
-    rarity: "C",
-    latitude: 50.738,
-    longitude: -3.531,
-    collectible: true
-  },
-  {
-    id: 6,
-    name: "HealthHunter",
-    type: "H",
-    rarity: "R",
-    latitude: 50.735,
-    longitude: -3.529,
-    collectible: true
-  },
-  {
-    id: 7,
-    name: "WellbeingWhisperer",
-    type: "WB",
-    rarity: "E",
-    latitude: 50.732,
-    longitude: -3.534,
-    collectible: true
-  }
-];
+const BACKEND = "http://localhost:8000";
 
 const getRarityColor = (rarity) => {
   switch(rarity) { // can change these colours later just liked them from now
@@ -160,8 +89,7 @@ const getRarityName = (rarity) => {
 const getTypeName = (type) => {
   switch(type) {
     case 'F&D': return 'Food and Drink';
-    case 'H': return 'Health';
-    case 'WB': return 'Wellbeing';
+    case 'HWB': return 'Health and Wellbeing';
     case 'W': return 'Water';
     case 'WA': return 'Waste';
     case 'N&B': return 'Nature and Biodiversity';
@@ -325,11 +253,47 @@ const HomePage = () => {
   const defaultPosition = [50.735, -3.533]; // Default center position which is just exeter uni basically
   const [userPosition, setUserPosition] = useState(null);
   const [manualPosition, setManualPosition] = useState(null);
-  const [monsters, setMonsters] = useState(mockMonsters);
+  const [monsters, setMonsters] = useState([]);
   const [selectedMonster, setSelectedMonster] = useState(null);
   const [isManualMode, setIsManualMode] = useState(false);
   const [showCollectionPopup, setShowCollectionPopup] = useState(false);
   const [collectedMonster, setCollectedMonster] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
+  // Get locations from the backend
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const token = localStorage.getItem('accessToken');
+        
+        const response = await fetch(`${BACKEND}/api/location/locations/`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch locations');
+        }
+        
+        const locationData = await response.json();
+        // Map the locations to include collectible status
+        const mappedMonsters = locationData.map(location => ({
+          ...location,
+          collectible: true // Assume all are collectible initially
+        }));
+        
+        setMonsters(mappedMonsters);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching locations:', error);
+        setLoading(false);
+      }
+    };
+    
+    fetchLocations();
+  }, []);
   
   // Check for initial user location
   useEffect(() => {
@@ -350,7 +314,7 @@ const HomePage = () => {
     }
   }, []);
 
-  // Update canCollect state based on user position and nearby monsters
+  // Update can Collect state based on user position and nearby monsters
   useEffect(() => {
     if (userPosition) {
       // Check if any monster is within collection range which is currently 100m but probably should make this an environment variable or something so its easier to fiddle with
@@ -394,32 +358,31 @@ const HomePage = () => {
   };
 
   const handleCollect = () => {
-    if (selectedMonster && canCollect) {
+      if (selectedMonster && canCollect) {
+
       setCollectedMonster(selectedMonster);
       setShowCollectionPopup(true);
-    }
+      }
   };
-
+    
   const handleClosePopup = () => {
-    setShowCollectionPopup(false);
+      setShowCollectionPopup(false);
   };
-
+    
   const handleMonsterCollected = (collectedMonster) => {
-    // Need to implement that backend for this but i thnk this is alright for now because you shouldnt be able to collect a monster twice.
-    setMonsters(prevMonsters =>
+      setMonsters(prevMonsters =>
       prevMonsters.map(monster =>
-        monster.id === selectedMonster.id
+          monster.id === selectedMonster.id
           ? { ...monster, collectible: false }
           : monster
       )
-    );
-    
-    setCanCollect(false);
-    
-    // Close the popup after a short delay
-    setTimeout(() => {
+      );
+      
+      setCanCollect(false);
+      
+      setTimeout(() => {
       setShowCollectionPopup(false);
-    }, 3000);
+      }, 3000);
   };
 
   const handleMonsterClick = (monster) => {
@@ -474,11 +437,13 @@ const HomePage = () => {
           manualPosition={manualPosition}
           setManualPosition={setManualPosition}
         />
-        <MonsterMarkers
-          monsters={monsters}
-          userPosition={userPosition}
-          onMonsterClick={handleMonsterClick}
-        />
+        {!loading && (
+          <MonsterMarkers
+            monsters={monsters}
+            userPosition={userPosition}
+            onMonsterClick={handleMonsterClick}
+          />
+        )}
       </MapContainer>
       
       <button
@@ -508,7 +473,7 @@ const HomePage = () => {
         disabled={!canCollect}
       >
         {canCollect && selectedMonster
-          ? `Collect ${selectedMonster.name}`
+          ? `Collect ${getTypeName(selectedMonster.type)} Monster`
           : "No monsters nearby"}
       </button>
 
