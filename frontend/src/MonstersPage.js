@@ -4,7 +4,7 @@ import './MonstersPage.css';
 
 const BACKEND = "http://localhost:8000";
 
-// Monster images based on type - matching the HomePage icons
+// Monster images based on type
 const monsterImages = {
   'F&D': { C: ['/images/food1.png'],
     R: ['/images/food2.png'],
@@ -64,8 +64,7 @@ const getRarityClass = (rarity) => {
 const getTypeLabel = (type) => {
   const types = {
     'F&D': 'Food and Drink',
-    'H': 'Health',
-    'WB': 'Wellbeing',
+    'HWB': 'Health and Wellbeing',
     'W': 'Water',
     'WA': 'Waste',
     'N&B': 'Nature and Biodiversity',
@@ -75,32 +74,36 @@ const getTypeLabel = (type) => {
 };
 
 const MonsterCard = ({ monster }) => {
-  // Get the appropriate monster image
-  const monsterImage = monsterImages[monster.type] || monsterImages.default;
+  // Get the appropriate monster image based on type and rarity
+  const getMonsterImage = () => {
+    const typeImages = monsterImages[monster.monster.type];
+    if (typeImages && typeImages[monster.monster.rarity]) {
+      // If we have images for this type and rarity
+      const images = typeImages[monster.monster.rarity];
+      return images[0]; // Just use the first one for now
+    }
+    return monsterImages.default;
+  };
   
   return (
     <div className="monster-card">
-      <div className={`monster-image-container ${getRarityClass(monster.rarity)}`}>
+      <div className={`monster-image-container ${getRarityClass(monster.monster.rarity)}`}>
         <img
-          src={monsterImage}
-          alt={monster.name}
+          src={getMonsterImage()}
+          alt={monster.monster.name}
           className="monster-image"
-          onError={(e) => {
-            // Fallback to placeholder if image doesn't load
-            e.target.src = "/api/placeholder/400/400";
-          }}
         />
         <div className="rarity-badge">
-          {monster.rarity === 'C' ? 'Common' :
-           monster.rarity === 'R' ? 'Rare' :
-           monster.rarity === 'E' ? 'Epic' :
+          {monster.monster.rarity === 'C' ? 'Common' :
+           monster.monster.rarity === 'R' ? 'Rare' :
+           monster.monster.rarity === 'E' ? 'Epic' :
            'Legendary'}
         </div>
         <div className="level-badge">Lvl {monster.level}</div>
       </div>
       <div className="monster-info">
-        <h3 className="monster-name">{monster.name}</h3>
-        <p className="monster-type">{getTypeLabel(monster.type)}</p>
+        <h3 className="monster-name">{monster.monster.name}</h3>
+        <p className="monster-type">{getTypeLabel(monster.monster.type)}</p>
       </div>
     </div>
   );
@@ -112,27 +115,35 @@ const MonstersPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-    // Add levels
+  // Add levels
   const fetchMonsters = async () => {
-    // TODO: Implement when endpoint is written
-    
-      // These are just completely made up so that i can test what it looks like
+    try {
+      const token = localStorage.getItem('accessToken');
       
-      /*const sampleMonsters = [
-            { id: 1, name: "EcoDragon", type: "N&B", rarity: "L", level: 1 },
-            { id: 2, name: "WaterSprite", type: "W", rarity: "R", level: 4 },
-            { id: 3, name: "FoodGuardian", type: "F&D", rarity: "C", level: 2 },
-            { id: 4, name: "TreeSpirit", type: "N&B", rarity: "E", level: 3 },
-            { id: 5, name: "WasteWizard", type: "WA", rarity: "R", level: 8 },
-            { id: 6, name: "HealthHero", type: "H", rarity: "C", level: 7 },
-          ];
-          setMonsters(sampleMonsters);
-          setLoading(false);*/
+      const response = await fetch(`${BACKEND}/api/monsters/get-player-monsters/`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch monsters');
+      }
+      
+      const monstersData = await response.json();
+      setMonsters(monstersData);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching monsters:', error);
+      setError('Failed to load monsters. Please try again later.');
+      setLoading(false);
+    }
   };
     
-    const playGameButtonPressHandler = () => {
-        navigate("/monsters_challenge");
-    };
+  const playGameButtonPressHandler = () => {
+    navigate("/monsters_challenge");
+  };
 
   useEffect(() => {
     fetchMonsters();

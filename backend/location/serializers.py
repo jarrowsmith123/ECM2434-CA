@@ -14,10 +14,10 @@ class LocationSerializer(serializers.ModelSerializer):
         latitude = data.get('latitude')
         longitude = data.get('longitude')
 
-        if latitude is not (-90 <= latitude <= 90):
+        if -90.0 >= latitude or latitude >= 90:
             raise serializers.ValidationError("Latitude must be between -90 and 90 degrees")
 
-        if longitude is not (-180 <= longitude <= 180):
-            raise serializers.ValidationError("Latitude must be between -90 and 90 degrees")
+        if -180.0 >= longitude or longitude >= 180:
+            raise serializers.ValidationError("Longitude must be between -180 and 180 degrees")
 
         return data

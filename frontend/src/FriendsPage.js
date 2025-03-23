@@ -6,18 +6,36 @@ const BACKEND = "http://localhost:8000";
 
 const FriendsPage = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState([]);
   const [friends, setFriends] = useState([]);
   const [pendingRequests, setPendingRequests] = useState([]);
   const [sentRequests, setSentRequests] = useState([]);
-  const [username, setUsername] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [tab, setTab] = useState('friends'); // tabs: friends, requests, add
-
+  const [isSearching, setIsSearching] = useState(false);
+    
   useEffect(() => {
+    fetchCurrentUser();
     fetchFriends();
   }, []);
+    
+  const fetchCurrentUser = async() => {
+      const token = localStorage.getItem('accessToken');
+      
+      const user_response = await fetch(`${BACKEND}/api/user/me/`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          }
+        });
+  
+      setUser(await user_response.json());
+  }
 
   const fetchFriends = async () => {
     try {
@@ -48,11 +66,11 @@ const FriendsPage = () => {
       }
 
       const data = await response.json();
-      
+        
       // Filter friends by status
       const acceptedFriends = data.filter(f => f.status === 'accepted');
-      const receivedRequests = data.filter(f => f.status === 'pending' && f.receiver_username === localStorage.getItem('username'));
-      const outgoingRequests = data.filter(f => f.status === 'pending' && f.sender_username === localStorage.getItem('username'));
+      const receivedRequests = data.filter(f => f.status === 'pending' && f.receiver_username === user);
+      const outgoingRequests = data.filter(f => f.status === 'pending' && f.sender_username === user);
       
       setFriends(acceptedFriends);
       setPendingRequests(receivedRequests);
@@ -64,15 +82,50 @@ const FriendsPage = () => {
     }
   };
 
-  const sendFriendRequest = async (e) => {
+  const searchUsers = async (e) => {
     e.preventDefault();
     setError('');
     setSuccessMessage('');
     
-    if (!username.trim()) {
-      setError('Please enter a username');
+    if (!searchTerm.trim()) {
+      setError('Please enter a username to search');
       return;
     }
+    
+    try {
+      setIsSearching(true);
+      const token = localStorage.getItem('accessToken');
+      
+      const response = await fetch(`${BACKEND}/api/user/search-user/?search=${searchTerm}&limit=10`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to search for users');
+      }
+
+      const data = await response.json();
+      // Filter out the current user from results
+      const filteredResults = data.filter(user => user.username !== user);
+      setSearchResults(filteredResults);
+      setIsSearching(false);
+      
+      if (filteredResults.length === 0) {
+        setError('No users found with that username');
+      }
+    } catch (err) {
+      setError('Error searching for users: ' + err.message);
+      setIsSearching(false);
+    }
+  };
+
+  const sendFriendRequest = async (username) => {
+    setError('');
+    setSuccessMessage('');
     
     try {
       const token = localStorage.getItem('accessToken');
@@ -93,10 +146,12 @@ const FriendsPage = () => {
         throw new Error(errorData.error || 'Failed to send friend request');
       }
 
-      setSuccessMessage('Friend request sent successfully!');
-      setUsername('');
+      setSuccessMessage(`Friend request sent to ${username}!`);
       // Refresh the friends list
       fetchFriends();
+      // Clear search results
+      setSearchResults([]);
+      setSearchTerm('');
     } catch (err) {
       setError('Error sending friend request: ' + err.message);
     }
@@ -152,6 +207,38 @@ const FriendsPage = () => {
     }
   };
 
+  // Check if the user is already a friend or has a pending request
+  const checkFriendshipStatus = (username) => {
+    // Check if they're already friends
+    const isFriend = friends.some(f =>
+      (f.sender_username === username && f.receiver_username === localStorage.getItem('username')) ||
+      (f.receiver_username === username && f.sender_username === localStorage.getItem('username'))
+    );
+    
+    if (isFriend) {
+      return "friends";
+    }
+    
+    // Check if there's a pending request from the current user
+    const hasSentRequest = sentRequests.some(r => r.receiver_username === username);
+    if (hasSentRequest) {
+      return "sent";
+    }
+    
+    // Check if there's a pending request to the current user
+    const hasReceivedRequest = pendingRequests.some(r => r.sender_username === username);
+    if (hasReceivedRequest) {
+      return "received";
+    }
+    
+    return "none";
+  };
+
+  // Add function to navigate to friend's profile
+  const navigateToFriendProfile = (username) => {
+    navigate(`/profile/${username}`);
+  };
+
   if (loading) {
     return (
       <div className="friends-container">
@@ -192,7 +279,13 @@ const FriendsPage = () => {
             </div>
             <div
               className={`tab ${tab === 'add' ? 'active' : ''}`}
-              onClick={() => setTab('add')}
+              onClick={() => {
+                setTab('add');
+                setSearchResults([]);
+                setSearchTerm('');
+                setError('');
+                setSuccessMessage('');
+              }}
             >
               Add Friend
             </div>
@@ -222,23 +315,29 @@ const FriendsPage = () => {
                 </div>
               ) : (
                 <div className="friends-grid">
-                  {friends.map((friend) => (
-                    <div key={friend.id} className="friend-card">
-                      <div className="friend-avatar">
-                        {(friend.sender_username === localStorage.getItem('username')
-                          ? friend.receiver_username
-                          : friend.sender_username).charAt(0).toUpperCase()}
+                  {friends.map((friend) => {
+                    const friendUsername = friend.sender_username === user
+                      ? friend.receiver_username
+                      : friend.sender_username;
+                    
+                    return (
+                      <div
+                        key={friend.id}
+                        className="friend-card"
+                        onClick={() => navigateToFriendProfile(friendUsername)}
+                      >
+                        <div className="friend-avatar">
+                          {friendUsername.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="friend-name">
+                          {friendUsername}
+                        </div>
+                        <div className="friend-since">
+                          Friends since {new Date(friend.created_at).toLocaleDateString()}
+                        </div>
                       </div>
-                      <div className="friend-name">
-                        {friend.sender_username === localStorage.getItem('username')
-                          ? friend.receiver_username
-                          : friend.sender_username}
-                      </div>
-                      <div className="friend-since">
-                        Friends since {new Date(friend.created_at).toLocaleDateString()}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
 
@@ -308,25 +407,67 @@ const FriendsPage = () => {
           {/* Add Friend Tab */}
           {tab === 'add' && (
             <div className="add-friend-container">
-              <h3>Add a Friend</h3>
-              <form onSubmit={sendFriendRequest} className="add-friend-form">
+              <h3>Find Friends</h3>
+              <form onSubmit={searchUsers} className="search-form">
                 <div className="form-group">
-                  <label className="form-label" htmlFor="username">Username</label>
-                  <input
-                    className="form-input"
-                    id="username"
-                    name="username"
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Enter your friend's username"
-                    required
-                  />
+                  <label className="form-label" htmlFor="searchTerm">Search by username</label>
+                  <div className="search-input-container">
+                    <input
+                      className="form-input"
+                      id="searchTerm"
+                      name="searchTerm"
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="Enter username to search"
+                      required
+                    />
+                    <button type="submit" className="search-button" disabled={isSearching}>
+                      {isSearching ? 'Searching...' : 'Search'}
+                    </button>
+                  </div>
                 </div>
-                <button type="submit" className="send-request-button">
-                  Send Friend Request
-                </button>
               </form>
+              
+              {searchResults.length > 0 && (
+                <div className="search-results">
+                  <h4>Search Results</h4>
+                  <div className="results-list">
+                    {searchResults.map((user) => {
+                      const status = checkFriendshipStatus(user.username);
+                      return (
+                        <div key={user.id} className="user-result-item">
+                          <div className="user-avatar">
+                            {user.username.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="user-details">
+                            <div className="user-username">{user.username}</div>
+                          </div>
+                          <div className="user-actions">
+                            {status === "none" && (
+                              <button
+                                className="add-friend-button"
+                                onClick={() => sendFriendRequest(user.username)}
+                              >
+                                Add Friend
+                              </button>
+                            )}
+                            {status === "friends" && (
+                              <span className="friendship-status friends">Already Friends</span>
+                            )}
+                            {status === "sent" && (
+                              <span className="friendship-status sent">Request Sent</span>
+                            )}
+                            {status === "received" && (
+                              <span className="friendship-status received">Respond to Request</span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
