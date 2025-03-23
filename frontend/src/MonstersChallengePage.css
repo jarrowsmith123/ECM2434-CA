@@ -601,3 +601,17 @@
     width: 100%;
   }
 }
+
+.challenge-container {
+  min-height: 100vh;
+  position: relative;
+  background: var(--background-gradient);
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.challenge-content {
+  width: 100%;
+  padding: 1rem;
+}

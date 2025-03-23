@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './MonstersChallengePage.css';
 
 const BACKEND = "http://localhost:8000/api";
@@ -284,6 +285,7 @@ const MonsterChallengePage = () => {
   const [synergies, setSynergies] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const navigate = useNavigate();
   
   const getAccessToken = () => {
     return localStorage.getItem('accessToken');
@@ -441,126 +443,140 @@ const MonsterChallengePage = () => {
     setMonstersInHand([]);
   };
   
+  const handleBackClick = () => {
+    navigate('/monsters');
+  };
+  
   return (
-    <div className="monsters-container">
-      <div className="monsters-content">
-        {/* Challenge Info Card */}
-        <div className="challenge-card">
-          <div className="challenge-header">
-            <h2 className="challenge-title">
-              {challenge ? challenge.name : 'Loading Challenge...'}
-            </h2>
-          </div>
-          {challenge && (
-            <div className="challenge-info">
-              <div className="target-score-container">
-                <div className="target-score-label">Target Score:</div>
-                <div className="target-score-value">{challenge.target_score}</div>
+    <div className="challenge-container">
+      <button className="back-button" onClick={handleBackClick}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+        Back
+      </button>
+      <div className="challenge-content">
+        <div className="monsters-container">
+          <div className="monsters-content">
+            {/* Challenge Info Card */}
+            <div className="challenge-card">
+              <div className="challenge-header">
+                <h2 className="challenge-title">
+                  {challenge ? challenge.name : 'Loading Challenge...'}
+                </h2>
               </div>
-              <div className="score-gauge-container">
-                <div className="score-gauge-background">
-                  <div
-                    className="score-gauge-fill"
-                    style={{
-                      width: `${Math.min(100, (currentScore / challenge.target_score) * 100)}%`,
-                      backgroundColor: currentScore >= challenge.target_score ? 'var(--secondary-color)' : 'var(--primary-color)'
-                    }}
-                  ></div>
-                </div>
-                <div className="current-score-value">Current Score: {currentScore}</div>
-              </div>
-            </div>
-          )}
-        </div>
-        
-        {/* Success Message */}
-        {showSuccess && (
-          <div className="success-message">
-            <h3>Challenge Completed!</h3>
-            <p>{successMessage}</p>
-          </div>
-        )}
-        
-        {/* Error Message */}
-        {error && (
-          <div className="error-message">{error}</div>
-        )}
-        
-        {/* Game Layout */}
-        <div className="game-area">
-          {/* Team Area */}
-          <div className="hand-area">
-            <h3 className="area-title">Your Team</h3>
-            <div className="team-container">
-              {monstersInHand.length === 0 ? (
-                <div className="empty-team-message">
-                  Tap on monsters below to add them to your team (max 5)
-                </div>
-              ) : (
-                <div className="hand-monsters">
-                  {monstersInHand.map((monster) => (
-                    <HandMonsterCard
-                      key={monster.id}
-                      monster={monster}
-                      onRemove={removeFromHand}
-                    />
-                  ))}
+              {challenge && (
+                <div className="challenge-info">
+                  <div className="target-score-container">
+                    <div className="target-score-label">Target Score:</div>
+                    <div className="target-score-value">{challenge.target_score}</div>
+                  </div>
+                  <div className="score-gauge-container">
+                    <div className="score-gauge-background">
+                      <div
+                        className="score-gauge-fill"
+                        style={{
+                          width: `${Math.min(100, (currentScore / challenge.target_score) * 100)}%`,
+                          backgroundColor: currentScore >= challenge.target_score ? 'var(--secondary-color)' : 'var(--primary-color)'
+                        }}
+                      ></div>
+                    </div>
+                    <div className="current-score-value">Current Score: {currentScore}</div>
+                  </div>
                 </div>
               )}
             </div>
             
-            {/* Synergy Bonuses */}
-            {synergies.length > 0 && (
-              <div className="synergy-container">
-                <h3 className="synergy-title">Team Synergies</h3>
-                <div className="synergy-list">
-                  {synergies.map((synergy, index) => (
-                    <div key={index} className="synergy-item">
-                      <div className="synergy-name">{synergy.name}</div>
-                      <div className="synergy-description">{synergy.description}</div>
-                    </div>
-                  ))}
-                </div>
+            {/* Success Message */}
+            {showSuccess && (
+              <div className="success-message">
+                <h3>Challenge Completed!</h3>
+                <p>{successMessage}</p>
               </div>
             )}
             
-            {/* Action Buttons */}
-            <div className="action-buttons">
-              <button
-                className="game-button submit-button"
-                onClick={submitChallenge}
-                disabled={monstersInHand.length === 0}
-              >
-                Submit Challenge
-              </button>
-              <button
-                className="game-button reset-button"
-                onClick={resetTeam}
-                disabled={monstersInHand.length === 0}
-              >
-                Reset Team
-              </button>
-            </div>
-          </div>
-          
-          {/* Monster Collection */}
-          <div className="collection-area">
-            <h3 className="area-title">Your Monsters</h3>
-            {loading ? (
-              <div className="loading-message">Loading your monsters...</div>
-            ) : (
-             <div className="collection-grid">
-               {monsters.map((monster) => (
-                 <SelectableMonsterCard
-                   key={monster.id}
-                   monster={monster}
-                   isSelected={false}
-                   isInHand={monstersInHand.some(m => m.id === monster.id)}
-                   onToggleSelect={toggleMonsterSelection}
-                 />
-               ))}
-             </div>
+            {/* Error Message */}
+            {error && (
+              <div className="error-message">{error}</div>
             )}
+            
+            {/* Game Layout */}
+            <div className="game-area">
+              {/* Team Area */}
+              <div className="hand-area">
+                <h3 className="area-title">Your Team</h3>
+                <div className="team-container">
+                  {monstersInHand.length === 0 ? (
+                    <div className="empty-team-message">
+                      Tap on monsters below to add them to your team (max 5)
+                    </div>
+                  ) : (
+                    <div className="hand-monsters">
+                      {monstersInHand.map((monster) => (
+                        <HandMonsterCard
+                          key={monster.id}
+                          monster={monster}
+                          onRemove={removeFromHand}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
+                {/* Synergy Bonuses */}
+                {synergies.length > 0 && (
+                  <div className="synergy-container">
+                    <h3 className="synergy-title">Team Synergies</h3>
+                    <div className="synergy-list">
+                      {synergies.map((synergy, index) => (
+                        <div key={index} className="synergy-item">
+                          <div className="synergy-name">{synergy.name}</div>
+                          <div className="synergy-description">{synergy.description}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Action Buttons */}
+                <div className="action-buttons">
+                  <button
+                    className="game-button submit-button"
+                    onClick={submitChallenge}
+                    disabled={monstersInHand.length === 0}
+                  >
+                    Submit Challenge
+                  </button>
+                  <button
+                    className="game-button reset-button"
+                    onClick={resetTeam}
+                    disabled={monstersInHand.length === 0}
+                  >
+                    Reset Team
+                  </button>
+                </div>
+              </div>
+              
+              {/* Monster Collection */}
+              <div className="collection-area">
+                <h3 className="area-title">Your Monsters</h3>
+                {loading ? (
+                  <div className="loading-message">Loading your monsters...</div>
+                ) : (
+                 <div className="collection-grid">
+                   {monsters.map((monster) => (
+                     <SelectableMonsterCard
+                       key={monster.id}
+                       monster={monster}
+                       isSelected={false}
+                       isInHand={monstersInHand.some(m => m.id === monster.id)}
+                       onToggleSelect={toggleMonsterSelection}
+                     />
+                   ))}
+                 </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>

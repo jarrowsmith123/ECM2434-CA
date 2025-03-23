@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './AdminPage.css';
 
 const BACKEND = "http://localhost:8000";
 
 const AdminChallenges = () => {
+  const navigate = useNavigate();
   const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -169,6 +171,10 @@ const AdminChallenges = () => {
     }
   };
 
+  const handleBackClick = () => {
+    navigate('/admin');
+  };
+
   const renderChallenges = () => {
     if (loading) return <div className="loading-message">Loading challenges...</div>;
     
@@ -289,20 +295,28 @@ const AdminChallenges = () => {
   };
 
   return (
-    <div>
-      {/* Messages */}
-      {error && (
-        <div className="error-message">{error}</div>
-      )}
-      {successMessage && (
-        <div className="success-message">{successMessage}</div>
-      )}
-      
-      {/* Form for creating/editing challenges */}
-      {renderForm()}
-      
-      {/* List of challenges */}
-      {!showForm && renderChallenges()}
+    <div className="admin-container">
+      <button className="back-button" onClick={handleBackClick}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+        Back
+      </button>
+      <div className="admin-content">
+        {/* Messages */}
+        {error && (
+          <div className="error-message">{error}</div>
+        )}
+        {successMessage && (
+          <div className="success-message">{successMessage}</div>
+        )}
+        
+        {/* Form for creating/editing challenges */}
+        {renderForm()}
+        
+        {/* List of challenges */}
+        {!showForm && renderChallenges()}
+      </div>
     </div>
   );
 };
