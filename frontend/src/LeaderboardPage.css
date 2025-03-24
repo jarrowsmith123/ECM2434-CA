@@ -1,0 +1,190 @@
+.leaderboard-page {
+  min-height: 100vh;
+  background: var(--background-gradient);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.leaderboard-container {
+  background-color: var(--card-bg);
+  border-radius: 15px;
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 600px;
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+.leaderboard-container h1 {
+  color: var(--primary-color);
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 28px;
+}
+
+.leaderboard-list {
+  margin-bottom: 30px;
+}
+
+.leaderboard-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 15px;
+  border-bottom: 2px solid var(--border-color);
+  font-weight: bold;
+  color: var(--text-color);
+  margin-bottom: 10px;
+}
+
+.rank-header {
+  width: 20%;
+  text-align: center;
+}
+
+.username-header {
+  width: 50%;
+}
+
+.wins-header {
+  width: 30%;
+  text-align: right;
+}
+
+.leaderboard-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  background-color: white;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.leaderboard-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.rank-badge {
+  width: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.rank-number {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--light-text);
+  color: white;
+  font-weight: bold;
+}
+
+.username {
+  width: 50%;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.win-count {
+  width: 30%;
+  text-align: right;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+/* Top 3 styling */
+.top-1 {
+  background-color: rgba(255, 215, 0, 0.1);
+  border-left: 4px solid gold;
+}
+
+.top-2 {
+  background-color: rgba(192, 192, 192, 0.1);
+  border-left: 4px solid silver;
+}
+
+.top-3 {
+  background-color: rgba(205, 127, 50, 0.1);
+  border-left: 4px solid #cd7f32;
+}
+
+.trophy {
+  font-size: 24px;
+}
+
+.trophy-1 {
+  color: gold;
+}
+
+.trophy-2 {
+  color: silver;
+}
+
+.trophy-3 {
+  color: #cd7f32;
+}
+
+.current-user {
+  background-color: rgba(0, 71, 171, 0.05);
+  border-left: 4px solid var(--primary-color);
+}
+
+.back-button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.back-button:hover {
+  background-color: var(--primary-hover);
+}
+
+.loading-spinner, .error-message {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-color);
+}
+
+.error-message {
+  color: var(--error-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .leaderboard-container {
+    padding: 20px;
+  }
+  
+  .leaderboard-item {
+    padding: 12px 10px;
+  }
+  
+  .trophy {
+    font-size: 20px;
+  }
+  
+  .rank-number {
+    width: 25px;
+    height: 25px;
+    font-size: 14px;
+  }
+} 
