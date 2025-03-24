@@ -15,6 +15,7 @@ import CreateMonster from './CreateMonster';
 import CreateQuestion from './CreateQuestion';
 import AdminLocationMap from './AdminLocationMap';
 import './App.css';
+import config from './config';
 
 // Protected route component for admin-only routes
 const AdminRoute = ({ children }) => {
@@ -25,7 +26,7 @@ const AdminRoute = ({ children }) => {
       if (!token) {
         return false;
       }
-      const response = await fetch("http://localhost:8000/api/user/check-admin/", {
+      const response = await fetch(`${config.API_URL}/api/user/check-admin/`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

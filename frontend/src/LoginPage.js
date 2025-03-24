@@ -2,8 +2,9 @@ import { X } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
+import config from './config';
 
-const BACKEND = "http://localhost:8000"
+const BACKEND = config.API_URL;
 
 const LoginPage = () => {
   const navigate = useNavigate();

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './UserProfilePage.css';
+import config from './config';
 
 // Helper function to get color based on monster type
 const getMonsterColor = (type) => {
@@ -100,7 +101,7 @@ const getTypeLabel = (type) => {
   return types[type] || type;
 };
 
-const BACKEND = "http://localhost:8000";
+const BACKEND = config.API_URL;
 
 const OtherUserProfilePage = () => {
   const { username } = useParams(); // Get the username from URL parameters

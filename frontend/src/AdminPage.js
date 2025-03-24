@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AdminPage.css';
 import AdminChallenges from './AdminChallenges'; // Import the new component
+import config from './config';
 
-const BACKEND = "http://localhost:8000";
+const BACKEND = config.API_URL;
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
