@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import UserSerializer, FriendshipSerializer
-from .models import User, Friendship
+from .models import User, Friendship, UserProfile
 from django.db.models import Q
 from monsters.models import PlayerMonster
 from monsters.serializers import PlayerMonsterSerializer
@@ -231,5 +231,24 @@ def view_user_profile(request, username):
     except Exception as e:
         return Response(
             {'error': str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+@api_view(['GET'])
+@permission_classes([AllowAny]) 
+def leaderboard(request):
+    try:
+        top_users = UserProfile.objects.order_by('-game_won_count')[:5] # Get top 5 players in descending order
+        
+        leaderboard_data = []
+        
+        for profile in top_users: # Create dict for each profile
+            leaderboard_data.append({ 'username': profile.user.username, 'game_won_count': profile.game_won_count})
+            
+        return Response(leaderboard_data, status=status.HTTP_200_OK) # Return leaderboard (dict of profiles)
+        
+    except Exception as e:
+        return Response(
+            {'error'},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
