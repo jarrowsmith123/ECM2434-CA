@@ -32,12 +32,12 @@
   border: none;
   font-size: 24px;
   cursor: pointer;
-  color: #666;
+  color: var(--light-text);
   transition: color 0.2s;
 }
 
 .popup-close-button:hover {
-  color: #000;
+  color: var(--text-color);
 }
 
 .popup-content {
@@ -71,15 +71,18 @@
 
 .hatch-button {
   margin-top: 1.5rem;
-  padding: 0.8rem 2rem;
-  background: linear-gradient(to right, var(--accent-color, #8B5CF6), var(--primary-color, #EC4899));
+  padding: 0.875rem 1.5rem;
+  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
   color: white;
   border: none;
   border-radius: 12px;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
