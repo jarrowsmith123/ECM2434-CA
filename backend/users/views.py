@@ -7,6 +7,7 @@ from .models import User, Friendship
 from django.db.models import Q
 from monsters.models import PlayerMonster
 from monsters.serializers import PlayerMonsterSerializer
+from .models import UserProfile
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -228,6 +229,59 @@ def view_user_profile(request, username):
             {'error': 'User not found.'},
             status=status.HTTP_404_NOT_FOUND
         )
+    except Exception as e:
+        return Response(
+            {'error': str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def leaderboard(request):
+    try:
+        # Get top 5 users by game_won_count
+        top_users = UserProfile.objects.order_by('-game_won_count')[:5]
+        
+        # Get the requesting user's profile
+        user_profile = request.user.profile
+        
+        # Create list of top users with their ranks
+        leaderboard_data = []
+        for index, profile in enumerate(top_users):
+            leaderboard_data.append({
+                'rank': index + 1,
+                'username': profile.user.username,
+                'game_won_count': profile.game_won_count,
+                'is_current_user': profile.user.id == request.user.id
+            })
+        
+        # Find current user's rank if not in top 5
+        current_user_in_top = any(entry['is_current_user'] for entry in leaderboard_data)
+        current_user_rank = None
+        
+        if not current_user_in_top:
+            # Count how many users have more wins than the current user
+            higher_ranked_count = UserProfile.objects.filter(
+                game_won_count__gt=user_profile.game_won_count
+            ).count()
+            
+            current_user_rank = higher_ranked_count + 1
+            
+            # Add current user data
+            current_user_data = {
+                'rank': current_user_rank,
+                'username': request.user.username,
+                'game_won_count': user_profile.game_won_count,
+                'is_current_user': True
+            }
+            
+            leaderboard_data.append(current_user_data)
+        
+        return Response({
+            'top_users': leaderboard_data,
+            'current_user_rank': current_user_rank
+        }, status=status.HTTP_200_OK)
+        
     except Exception as e:
         return Response(
             {'error': str(e)},

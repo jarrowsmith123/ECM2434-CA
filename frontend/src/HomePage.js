@@ -359,6 +359,10 @@ const HomePage = () => {
     navigate('/friends');
   };
 
+  const handleLeaderboardClick = () => {
+    navigate('/leaderboard');
+  };
+
   const handleCollect = () => {
       if (selectedMonster && canCollect) {
 
@@ -462,6 +466,13 @@ const HomePage = () => {
         onClick={handleProfileClick}
       >
         Profile
+      </button>
+      
+      <button
+        className="nav-button leaderboard-button"
+        onClick={handleLeaderboardClick}
+      >
+        Leaderboard
       </button>
       
       <button

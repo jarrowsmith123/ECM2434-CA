@@ -14,6 +14,7 @@ import UserMonstersManagement from './UserMonstersManagement';
 import CreateMonster from './CreateMonster';
 import CreateQuestion from './CreateQuestion';
 import AdminLocationMap from './AdminLocationMap';
+import LeaderboardPage from './LeaderboardPage';
 import './App.css';
 import config from './config';
 
@@ -58,6 +59,7 @@ function App() {
           <Route path="/profile/:username" element={<OtherUserProfilePage />} />
           <Route path="/friends" element={<FriendsPage />} />
           <Route path="/monsters_challenge" element={<MonstersChallengePage />} />
+          <Route path="/leaderboard" element={<LeaderboardPage />} />
           
           {/* Admin routes */}
           <Route path="/admin" element={

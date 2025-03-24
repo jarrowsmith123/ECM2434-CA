@@ -13,6 +13,7 @@ urlpatterns = [
     path('search-user/', views.search_user, name='search-user'),
     path('profile/<str:username>/', views.view_user_profile, name='view-user-profile'),
     path('me/', views.me, name='me'),
+    path('leaderboard/', views.leaderboard, name='leaderboard'),
     
     # Admin routes
     path('admin/users/', admin_views.get_all_users, name='admin-get-all-users'),
