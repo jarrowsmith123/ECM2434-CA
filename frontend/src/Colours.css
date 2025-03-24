@@ -1,0 +1,41 @@
+:root {
+    /* Main color palette */
+    --primary-color: #0047AB; /* Dark Blue */
+    --primary-hover: #00008B; /* Navy */
+    --secondary-color: #15b8a6; /* Teal */
+    --accent-color: #87CEEB; /* Light Blue */
+    
+    /* Backgrounds */
+    --background-gradient: linear-gradient(135deg, #87CEEB 0%, #e0f2fe 100%);
+    --card-bg: rgba(255, 255, 255, 0.95);
+    
+    /* Text colors */
+    --text-color: #334155;
+    --light-text: #64748b;
+    --error-color: #e11d48;
+    
+    /* UI elements */
+    --border-color: #e2e8f0;
+    --input-focus: #f8fafc;
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    
+    /* Status colors */
+    --success-color: #10b981; /* Green */
+    --warning-color: #f59e0b; /* Amber */
+    --info-color: #3b82f6; /* Blue */
+}
+
+/* Logo Styling */
+.logo {
+    display: block;
+    margin: 0;
+    height: 150px;
+    width: auto;
+    margin-left: 125px;
+}
+
+.homePageLogo {
+    display: block;
+    margin: auto;
+    width: 250px;
+}

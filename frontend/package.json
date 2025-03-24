@@ -4,9 +4,17 @@
   "private": true,
   "dependencies": {
     "cra-template": "1.2.0",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^0.477.0",
     "react": "^19.0.0",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^19.0.0",
-    "react-scripts": "5.0.1"
+    "react-leaflet": "^5.0.0",
+    "react-router-dom": "^6.30.0",
+    "react-scripts": "^5.0.1",
+    "web-vitals": "^4.2.4",
+    "webpack": "^5.98.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -31,5 +39,18 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/user-event": "^14.6.1"
+  },
+  "jest": {
+  "moduleNameMapper": {
+    "^react-router-dom$": "<rootDir>/node_modules/react-router-dom/dist/index.js"
+  },
+  "transformIgnorePatterns": [
+    "/node_modules/(?!react-router|react-router-dom)/"
+  ]
+}
 }
