@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Colours.css';
 import './UserProfilePage.css';
+import config from './config';
 
-const BACKEND = "http://localhost:8000";
+const BACKEND = config.API_URL;
 
 const UserProfilePage = () => {
   const navigate = useNavigate();

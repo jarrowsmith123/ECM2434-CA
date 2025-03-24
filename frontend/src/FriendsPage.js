@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './FriendsPage.css';
+import config from './config';
 
-const BACKEND = "http://localhost:8000";
+const BACKEND = config.API_URL;
 
 const FriendsPage = () => {
   const navigate = useNavigate();

@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import './Colours.css';
 import './HomePage.css';
 import MonsterCollectionPopup from './MonsterCollectionPopup';
+import config from './config';
 
 const userIcon = new L.Icon({
   iconUrl: 'https://static.vecteezy.com/system/resources/thumbnails/019/897/155/small/location-pin-icon-map-pin-place-marker-png.png', // just using this one from the web temporarily
@@ -64,7 +65,7 @@ const monsterIcons = {
   })
 };
 
-const BACKEND = "http://localhost:8000";
+const BACKEND = config.API_URL;
 
 const getRarityColor = (rarity) => {
   switch(rarity) { // can change these colours later just liked them from now

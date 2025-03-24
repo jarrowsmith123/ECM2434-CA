@@ -1,10 +1,16 @@
+version: '3.8'
+
 services:
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - REACT_APP_API_URL=${REACT_APP_API_URL:-http://localhost:8000}
     ports:
-      - "3000:3000"
+      - "${FRONTEND_PORT:-3000}:80"
+    environment:
+      - RUNTIME_BACKEND_URL=${RUNTIME_BACKEND_URL:-}
     depends_on:
       - backend
 
@@ -13,4 +19,4 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "${BACKEND_PORT:-8000}:8000"

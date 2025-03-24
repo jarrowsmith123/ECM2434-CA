@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './AdminPage.css';
+import config from './config';
 
-const BACKEND = "http://localhost:8000";
+const BACKEND = config.API_URL;
 
 const AdminChallenges = () => {
   const [challenges, setChallenges] = useState([]);

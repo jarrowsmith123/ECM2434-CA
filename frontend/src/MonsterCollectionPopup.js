@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './MonsterCollectionPopup.css';
+import config from './config';
 
-const BACKEND = "http://localhost:8000";
+const BACKEND = config.API_URL;
 
 const MonsterCollectionPopup = ({ monster, onClose, onCollect }) => {
   const [isWiggling, setIsWiggling] = useState(true);

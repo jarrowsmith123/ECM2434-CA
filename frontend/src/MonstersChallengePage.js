@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './MonstersChallengePage.css';
+import config from './config';
 
-const BACKEND = "http://localhost:8000/api";
+const BACKEND = `${config.API_URL}/api`;
 
 // This is all for getting the images filepath
 const getMonsterImage = (type, rarity) => {

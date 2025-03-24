@@ -4,8 +4,9 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import './AdminPage.css';
+import config from './config';
 
-const BACKEND = "http://localhost:8000";
+const BACKEND = config.API_URL;
 
 const userIcon = new L.Icon({
   iconUrl: 'https://static.vecteezy.com/system/resources/thumbnails/019/897/155/small/location-pin-icon-map-pin-place-marker-png.png', // just using this one from the web temporarily
