@@ -18,7 +18,8 @@
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background-color: rgba(68, 131, 249, 0.4); /* Blue */
+  background-color: var(--accent-color); /* Light Blue */
+  opacity: 0.4;
   z-index: 0;
 }
 
@@ -30,7 +31,8 @@
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  background-color: rgba(68, 131, 249, 0.4); /* Blue */
+  background-color: var(--primary-color); /* Dark Blue */
+  opacity: 0.4;
   z-index: 0;
 }
 

@@ -1,9 +1,9 @@
 :root {
-  --primary-color: dark blue; /* Blue */
-  --primary-hover: navy;
+  --primary-color: #0047AB; /* Dark Blue */
+  --primary-hover: #00008B; /* Navy */
   --secondary-color: #15b8a6; /* Teal */
-  --accent-color: lightblue; /* Light Blue */
-  --background-gradient: linear-gradient(135deg, lightblue 0%, #e0f2fe 100%);
+  --accent-color: #87CEEB; /* Light Blue */
+  --background-gradient: linear-gradient(135deg, #87CEEB 0%, #e0f2fe 100%);
   --card-bg: rgba(255, 255, 255, 0.95);
   --text-color: #334155;
   --light-text: #64748b;
@@ -35,7 +35,7 @@
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background-color: lightblue; /* Light blue */
+  background-color: var(--accent-color);
   z-index: 0;
 }
 
@@ -59,7 +59,6 @@
   width: 100%;
   max-width: 420px;
   padding: 2.5rem;
-  padding-top: 1rem;
   position: relative;
   z-index: 1;
   transform: translateY(0);
@@ -75,7 +74,7 @@
 /* Header styles */
 .login-header {
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 2.5rem;
   position: relative;
 }
 
@@ -87,7 +86,7 @@
   transform: translateX(-50%);
   width: 50px;
   height: 4px;
-  background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
   border-radius: 2px;
 }
 
@@ -199,7 +198,7 @@
 
 .submit-button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(126, 34, 206, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 71, 171, 0.4);
 }
 
 .submit-button:disabled {
@@ -233,7 +232,7 @@
   height: 2px;
   bottom: 0;
   left: 50%;
-  background-color: var(--primary-hover);
+  background-color: var(--primary-color);
   transition: all 0.3s ease;
   transform: translateX(-50%);
 }
@@ -260,15 +259,12 @@
 }
 
 .policy-link {
-  color: var(--secondary-color);
+  color: var(--primary-color);
   font-weight: 600;
   text-decoration: underline;
   position: relative;
   cursor: pointer;
   transition: all 0.3s ease;
-  background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   padding: 0 0.25rem;
 }
 
@@ -313,159 +309,87 @@
   background-color: white;
   border-radius: 16px;
   box-shadow: var(--shadow);
-  padding: 2rem;
   width: 90%;
   max-width: 600px;
   max-height: 80vh;
+  padding: 2rem;
   overflow-y: auto;
   position: relative;
-  animation: slideUp 0.3s ease;
-  border: 3px solid var(--primary-color);
+  animation: slideUp 0.4s ease;
 }
 
 @keyframes slideUp {
-  from { transform: translateY(50px); opacity: 0; }
+  from { transform: translateY(30px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
 
 .policy-content h2 {
   color: var(--primary-color);
-  text-align: center;
   margin-bottom: 1.5rem;
-  font-size: 1.5rem;
+  text-align: center;
   position: relative;
+  padding-bottom: 0.5rem;
 }
 
 .policy-content h2::after {
   content: "";
   position: absolute;
-  bottom: -10px;
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 50px;
+  width: 60px;
   height: 4px;
   background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
   border-radius: 2px;
 }
 
 .policy-content p {
-  color: var(--text-color);
-  line-height: 1.6;
   margin-bottom: 1rem;
+  line-height: 1.6;
+  color: var(--text-color);
 }
 
 .close-button {
   position: absolute;
   top: 1rem;
-  right: 1.5rem;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: var(--accent-color);
-  cursor: pointer;
+  right: 1rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: var(--primary-color);
   width: 32px;
   height: 32px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   border-radius: 50%;
-  background-color: rgba(251, 113, 133, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
   transition: all 0.3s ease;
+  border: 2px solid var(--border-color);
+  font-size: 1.2rem;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .close-button:hover {
-  background-color: var(--accent-color);
+  background-color: var(--primary-color);
   color: white;
   transform: rotate(90deg);
 }
 
-/* Responsive adjustments */
 @media (max-width: 480px) {
   .login-card {
-    padding: 1.75rem;
+    padding: 1.5rem;
   }
-  
+
   .policy-content {
     padding: 1.5rem;
-    width: 95%;
+    border-radius: 12px;
   }
 }
 
-/* Privacy Policy Styling */
-
-.policy-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.policy-container input {
-  margin-right: 8px;
-}
-
-.policy-label {
-  color: var(--text-color);
-  font-size: 0.9rem;
-}
-
-.policy-link {
-  color: var(--primary-color);
-  text-decoration: underline;
-}
-
-.policy-link:hover {
-  color: var(--primary-hover);
-}
-
-/* Policy Pop-up */
-
-.policy-popup {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background-color: black;
-  display: flex;
-  justify-content: flex;
-  align-items: center;
-}
-
-.policy-content {
-  background: white;
-  width: 90%;
-  text-align: center;
-  position: relative;
-  box-shadow: var(--shadow);
-  border-radius: 12px;
-}
-
-.policy-content h2 {
-  color: var(--primary-color);
-  margin-bottom: 1rem;
-}
-
-.policy-content p {
-  color: var(--text-color);
-  font-size: 1rem;
-  line-height: 1.5;
-}
-
-.close-button {
-  position: absolute;
-  top: 12px;
-  right: 15px;
-  color: var(--error-color);
-  font-size: 1.5rem;
-  transition: color 0.5s;
-}
-
-.close-button:hover {
-  color: var(--primary-color)
-}
-
-/* Logo Styling */
+/* Logo styles */
 .logo {
   display: block;
-  margin: 0;
-  height: 175px;
+  margin: 0 auto 1.5rem;
+  height: 100px;
   width: auto;
-  margin-left: 125px;
 }
