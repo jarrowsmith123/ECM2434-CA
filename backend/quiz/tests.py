@@ -222,7 +222,7 @@ class APIViewsTest(APITestCase):
         }
         
         response = self.client.post(
-            reverse('check_answer'), 
+            reverse('check-answer'), # Changed from check_answer to check-answer
             answer_data,
             format='json'
         )
